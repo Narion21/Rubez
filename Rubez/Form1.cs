@@ -231,26 +231,49 @@ namespace Rubez
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            SaveFileDialog sf = new SaveFileDialog();
-            string filter = "CSV file (*.csv)|*.csv| All Files (*.*)|*.*";
-            sf.Filter = filter;
-            StreamWriter writer = null; // не используемая переменная
-            sf.ShowDialog(); // если я не выберу путь \ файл программа крашит
 
-            GetDataByReader();
+            SaveFileDialog sf = new SaveFileDialog();
+            sf.Filter = "CSV file (*.csv)|*.csv| All Files (*.*)|*.*";
+            sf.FilterIndex = 1;
+            sf.RestoreDirectory = true;
+
+
+           // string filter = "CSV file (*.csv)|*.csv| All Files (*.*)|*.*";
+           // sf.Filter = filter;
+          //  StreamWriter writer = null; // не используемая переменная
+          //  sf.ShowDialog(); // если я не выберу путь \ файл программа крашит
+
+            //  GetDataByReader();
             // 1 логическое действие - запрос начала и конца лучше делать через транзакцию
             // это позволит избежать внезапной коллизии (возможно ты не будешь ловить проблем но они могут возникнуть когда не надо и исправлять потом будет сложнее, просто совет)
             // открыть соединение к бд - начать транзакцию - отправить запросы друг за другом (можно дажже в 1 функции) - закрыть транзакцию - закрыть соединение 
             // + добавить проверку что значения начала и конца не 0
-            dataBase.Conn();
-            startIdx = dataBase.MinId(dTStart.Text, dTFinish.Text);
-            endIdx = dataBase.MaxId(dTStart.Text, dTFinish.Text);
-            dataBase.Close();
-            int numberId = endIdx - startIdx;
-            repeat = numberId / step;
-            remainderId = numberId - repeat * step;
-            timerOfProcesses.Start();
-            savePath = Path.GetDirectoryName(sf.FileName);
+            /*  dataBase.Conn();
+               startIdx = dataBase.MinId(dTStart.Text, dTFinish.Text);
+               endIdx = dataBase.MaxId(dTStart.Text, dTFinish.Text);
+               dataBase.Close();
+               int numberId = endIdx - startIdx;
+               repeat = numberId / step;
+               remainderId = numberId - repeat * step;
+               timerOfProcesses.Start();*/
+
+            
+
+            if (sf.ShowDialog() == DialogResult.OK)
+            {
+                StreamWriter sw = new StreamWriter(sf.FileName);
+                sw.Close();
+                Console.WriteLine("PATH1: " + sf.FileName);
+                savePath = sf.FileName;
+                Console.WriteLine("PATH2: " + savePath);
+            }
+            else
+            {
+                savePath = "";
+            }
+            
+            
+
         }
 
         private void TimeoutProcesses(object sender, ElapsedEventArgs e)
