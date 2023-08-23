@@ -23,11 +23,12 @@ namespace Rubez
         public string db { set; get; }
 
 
-        public List<string> listinfo = new List<string>();
+        public List<string> listinfo = new List<string>(); // не используемая переменная
 
         public int MinId(string value1, string value2)
         {
-
+            // название таблицы захардкожено, из-за чего я не могу работать со своей таблице
+            // что ломает логику, что я могу выбрать любую бд любую таблицу но работать с ней не могу
             string com = "SELECT MIN(id) FROM devicestable WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "'";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
@@ -37,6 +38,9 @@ namespace Rubez
 
             while (reader.Read())
             {
+                // нет никакого смысла брать строку - конвертировать ее в инт - чтобы потом в след запросе снова конвертировать с строку
+                // работай просто со строкой
+                // проверяй на пустоту и значение "0"
                 id = reader.GetValue(0).ToString();
                 id1 += int.Parse(id);
 
@@ -55,7 +59,7 @@ namespace Rubez
             string com = "SELECT MAX(id) FROM devicestable WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "'";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
-            NpgsqlDataReader reader = comDB.ExecuteReader();
+            NpgsqlDataReader reader = comDB.ExecuteReader(); // не хабудь обернуть в try-catch сразу
             string id = "";
             int id1 = 0;
 
@@ -105,7 +109,7 @@ namespace Rubez
             string com = "SELECT * FROM public.devicestable WHERE id >= '" + startPos.ToString() + "' AND id <= '" + endPos.ToString() + "' ORDER BY id asc;";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
-            NpgsqlDataReader reader = comDB.ExecuteReader();
+            NpgsqlDataReader reader = comDB.ExecuteReader(); // все испольнения сразу оборачивай в try-catch
 
             while (reader.Read())
             {
@@ -123,7 +127,7 @@ namespace Rubez
 
         public void Conn()
         {
-            bool result = true;
+            bool result = true; // не используемая переменная
 
             string dataBaseName = Properties.Settings.Default.comboDataTbC;
             string connectionString = "Server=" + Properties.Settings.Default.ipTbC + ";Port=" + Properties.Settings.Default.portTbC + ";Username=" + Properties.Settings.Default.loginTbC + ";Password=" + Properties.Settings.Default.passwordTbC;
@@ -149,7 +153,7 @@ namespace Rubez
         }
         public void Close()
         {
-            bool result = true;
+            bool result = true; // не используемая переменная
             try
             {
                 if (npgSqlConnection.State == System.Data.ConnectionState.Open)
@@ -172,11 +176,12 @@ namespace Rubez
             NpgsqlCommand com = new NpgsqlCommand(comT, npgSqlConnection);
             NpgsqlDataAdapter da = new NpgsqlDataAdapter(com);
             DataTable dt = new DataTable();
-            da.Fill(dt);
+            da.Fill(dt);// при попытке 1го подключения падает на этом месте
             return dt;
         }
         public DataTable ShowTbName()
         {
+            // дублирование кода с npgSqlConnection - ты уже создаешь соединение при открытии бд
             try
             {
                 string connectionString = "Server=" + ip + ";Port=" + port + ";Username=" + username + ";Password=" + password + ";Database=" + db;
@@ -198,6 +203,7 @@ namespace Rubez
 
         public DataSet Chart(string value1)
         {
+            // дублирование кода с npgSqlConnection - ты уже создаешь соединение при открытии бд
             string connectionString = "Server=" + Properties.Settings.Default.ipTbC + ";Port=" + Properties.Settings.Default.portTbC + ";Username=" + Properties.Settings.Default.loginTbC + ";Password=" + Properties.Settings.Default.passwordTbC + ";Database=" + Properties.Settings.Default.comboDataTbC;
             Console.WriteLine(connectionString);
             npgSqlConnection = new NpgsqlConnection(connectionString);

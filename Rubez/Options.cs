@@ -16,8 +16,8 @@ namespace Rubez
     {
         DataBase dataBase = new DataBase();
         public static DataSet test = null;
-        Form1 form1 = new Form1();
-        string text;
+        Form1 form1 = new Form1(); // не используемая переменная
+        string text; // не используемая переменная
 
         public Options()
         {
@@ -70,7 +70,7 @@ namespace Rubez
             dataBase.username = loginTb.Text; // postgres
             dataBase.password = passwordTb.Text; // postgres
             dataBase.Conn();
-            dbCb.DataSource = dataBase.ShowDbName();
+            dbCb.DataSource = dataBase.ShowDbName(); // лучше сразу переделать эту часть иначе все время все вылетает
             dbCb.DisplayMember = "DATNAME";
             dbCb.ValueMember = "DATNAME";
             dataBase.Close();
@@ -103,6 +103,7 @@ namespace Rubez
             Properties.Settings.Default.passwordTbC = passwordTb.Text;
             Properties.Settings.Default.comboDataTbC = comboDataTb.Text;
             Properties.Settings.Default.comboTableTbC = comboTableTb.Text;
+            // можно избавиться от лишних текстбоксов и сохранять названия прям из комбобоксов, надо взять лишь свойсто text = dbCb.text
             //Properties.Settings.Default.comboDataTb = dbCb.SelectedItem.ToString();
             //Properties.Settings.Default.comboTableTb = tbCb.SelectedValue.ToString();
             Properties.Settings.Default.Save();

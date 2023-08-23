@@ -96,7 +96,7 @@ namespace Rubez
 
         private void reportButton_Click(object sender, EventArgs e)
         {
-            {
+            { // зачем эти скобки и к чему они относятся?
                 csvreport.Csv(dTStart.Text, dTFinish.Text);
             }
         }
@@ -185,7 +185,7 @@ namespace Rubez
                     errorFilterLb.Text = "Нижний порог не может быть больше верхнего";
                 }
             }
-            catch { }
+            catch { } //лучше не оставлять пустой catch а дописать его нормально, чтобы видеть ошибку в случае возникновения
 
         }
 
@@ -234,10 +234,14 @@ namespace Rubez
             SaveFileDialog sf = new SaveFileDialog();
             string filter = "CSV file (*.csv)|*.csv| All Files (*.*)|*.*";
             sf.Filter = filter;
-            StreamWriter writer = null;
-            sf.ShowDialog();
+            StreamWriter writer = null; // не используемая переменная
+            sf.ShowDialog(); // если я не выберу путь \ файл программа крашит
 
             GetDataByReader();
+            // 1 логическое действие - запрос начала и конца лучше делать через транзакцию
+            // это позволит избежать внезапной коллизии (возможно ты не будешь ловить проблем но они могут возникнуть когда не надо и исправлять потом будет сложнее, просто совет)
+            // открыть соединение к бд - начать транзакцию - отправить запросы друг за другом (можно дажже в 1 функции) - закрыть транзакцию - закрыть соединение 
+            // + добавить проверку что значения начала и конца не 0
             dataBase.Conn();
             startIdx = dataBase.MinId(dTStart.Text, dTFinish.Text);
             endIdx = dataBase.MaxId(dTStart.Text, dTFinish.Text);
@@ -251,7 +255,7 @@ namespace Rubez
 
         private void TimeoutProcesses(object sender, ElapsedEventArgs e)
         {
-
+            
             if (count != repeat)
             {
                 count++;
@@ -259,9 +263,11 @@ namespace Rubez
                 GetDataByReader();
                 startIdx = endIdx;
             }
-
+                // формат кода - лишний пробел
             else
             {
+                // правильно будет делать сначала остановку таймера, только после этоговсе остальное, иначе можешь поймать коллизию
+                // при работе с вычислениями лучше использовать переменные не глобальные а локальные и прокидывать их как параметры
                 startIdx = endIdx;
                 endIdx = startIdx + remainderId;
                 GetDataByReader();
