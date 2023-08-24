@@ -65,13 +65,14 @@ namespace Rubez
         }
 
         private void showTableListButton_Click(object sender, EventArgs e)
-        {
+        {           
             if (dbCb.SelectedIndex > -1)
             {
                 comboDataTb.Text = dbCb.SelectedValue.ToString();
+                Properties.Settings.Default.comboDataTbC = dbCb.Text; //comboDataTb.Text;
+                Properties.Settings.Default.Save();
             }
-            Properties.Settings.Default.comboDataTbC = comboDataTb.Text;
-            Properties.Settings.Default.Save();
+            
             tbCb.DataSource = dataBase.ShowTbName();
             tbCb.DisplayMember = "TABLE_NAME";
             tbCb.ValueMember = "TABLE_NAME";
@@ -83,9 +84,10 @@ namespace Rubez
             if (tbCb.SelectedIndex > -1)
             {
                 comboTableTb.Text = tbCb.SelectedValue.ToString();
+                Properties.Settings.Default.comboTableTbC = tbCb.Text; //comboTableTb.Text;
+                Properties.Settings.Default.Save();
             }
-            Properties.Settings.Default.comboTableTbC = comboTableTb.Text;
-            Properties.Settings.Default.Save();
+            
         }
 
 

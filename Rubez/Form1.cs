@@ -145,7 +145,9 @@ namespace Rubez
                     errorFilterLb.Text = "Нижний порог не может быть больше верхнего";
                 }
             }
-            catch { }
+            catch // допиши
+            { 
+            }
 
         }
 
@@ -221,7 +223,6 @@ namespace Rubez
                 GetDataByReader();
                 startIdx = endIdx;
             }
-
             else
             {
                 timerOfProcesses.Stop();
