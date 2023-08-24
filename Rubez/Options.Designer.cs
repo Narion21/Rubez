@@ -195,7 +195,7 @@
             this.Controls.Add(this.ipTb);
             this.Name = "Options";
             this.Text = "Form2";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form2_Closed);
+            
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

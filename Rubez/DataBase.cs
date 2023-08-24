@@ -13,73 +13,56 @@ namespace Rubez
     internal class DataBase
     {
 
-        NpgsqlConnection npgSqlConnection = null;
+        public NpgsqlConnection npgSqlConnection = null;
+        public List<string> listinfo = new List<string>();
 
-
-        public string ip { set; get; }
-        public string port { set; get; }
-        public string username { set; get; }
-        public string password { set; get; }
-        public string db { set; get; }
-
-
-        public List<string> listinfo = new List<string>(); // не используемая переменная
-
-        public int MinId(string value1, string value2)
+        public string MinId(string value1, string value2)
         {
-            // название таблицы захардкожено, из-за чего я не могу работать со своей таблице
-            // что ломает логику, что я могу выбрать любую бд любую таблицу но работать с ней не могу
+            string id = "";
             string com = "SELECT MIN(id) FROM devicestable WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "'";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
-            NpgsqlDataReader reader = comDB.ExecuteReader();
-            string id = "";
-            int id1 = 0;
-
-            while (reader.Read())
+            try
             {
-                // нет никакого смысла брать строку - конвертировать ее в инт - чтобы потом в след запросе снова конвертировать с строку
-                // работай просто со строкой
-                // проверяй на пустоту и значение "0"
-                id = reader.GetValue(0).ToString();
-                id1 += int.Parse(id);
+                NpgsqlDataReader reader = comDB.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    id = reader.GetValue(0).ToString();
+                }
+                reader.Close();
+                Console.WriteLine("min===" + id);
 
             }
-            reader.Close();
-
-            Console.WriteLine("min===" + id1);
-            return id1;
-            
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return id;
         }
 
-        
-
-        public int MaxId(string value1, string value2)
+        public string MaxId(string value1, string value2)
         {
+            string id = "";
             string com = "SELECT MAX(id) FROM devicestable WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "'";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
-            NpgsqlDataReader reader = comDB.ExecuteReader(); // не хабудь обернуть в try-catch сразу
-            string id = "";
-            int id1 = 0;
-
-            while (reader.Read())
+            try
             {
-                id = reader.GetValue(0).ToString();
-                id1 += int.Parse(id);
-
+                NpgsqlDataReader reader = comDB.ExecuteReader();
+                while (reader.Read())
+                {
+                    id = reader.GetValue(0).ToString();
+                }
+                reader.Close();
+                Console.WriteLine("max===" + id);
             }
-            reader.Close();
-            Console.WriteLine("max===" + id1);
-            return id1;
-
-
-
-
-
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return id;
         }
-
 
         public int IdCount(string value1, string value2)
         {
@@ -87,21 +70,27 @@ namespace Rubez
             string com = "SELECT MIN(id), MAX(id) FROM devicestable WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "'";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
-            NpgsqlDataReader reader = comDB.ExecuteReader();
-            string id1 = "";
-            string id2 = "";
-            while (reader.Read())
+            try
             {
-                id1 = reader.GetValue(0).ToString();
-                id2 = reader.GetValue(1).ToString();
+                NpgsqlDataReader reader = comDB.ExecuteReader();
+                string id1 = "";
+                string id2 = "";
+                while (reader.Read())
+                {
+                    id1 = reader.GetValue(0).ToString();
+                    id2 = reader.GetValue(1).ToString();
+                }
+                countId = int.Parse(id2) - int.Parse(id1);
+                Console.WriteLine("min===" + id1);
+                Console.WriteLine("max===" + id2);
+                Console.WriteLine("count===" + countId);
             }
-            countId = int.Parse(id2) - int.Parse(id1);
-            Console.WriteLine("min===" + id1);
-            Console.WriteLine("max===" + id2);
-            Console.WriteLine("count===" + countId);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return countId;
         }
-
 
         public List<string> DataFromBD(int startPos, int endPos)
         {
@@ -109,33 +98,34 @@ namespace Rubez
             string com = "SELECT * FROM public.devicestable WHERE id >= '" + startPos.ToString() + "' AND id <= '" + endPos.ToString() + "' ORDER BY id asc;";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
-            NpgsqlDataReader reader = comDB.ExecuteReader(); // все испольнения сразу оборачивай в try-catch
-
-            while (reader.Read())
+            try
             {
-                for (int i = 0; i < reader.FieldCount; i++)
+                NpgsqlDataReader reader = comDB.ExecuteReader();
+
+                while (reader.Read())
                 {
-                    string data = reader.GetValue(i).ToString();
-                    listA.Add(data);
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        string data = reader.GetValue(i).ToString();
+                        listA.Add(data);
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return listA;
         }
 
-
-
         public void Conn()
         {
-            bool result = true; // не используемая переменная
-
             string dataBaseName = Properties.Settings.Default.comboDataTbC;
             string connectionString = "Server=" + Properties.Settings.Default.ipTbC + ";Port=" + Properties.Settings.Default.portTbC + ";Username=" + Properties.Settings.Default.loginTbC + ";Password=" + Properties.Settings.Default.passwordTbC;
             if (dataBaseName != string.Empty)
             {
                 connectionString += ";Database = " + Properties.Settings.Default.comboDataTbC;
             }
-
             Console.WriteLine(connectionString);
             try
             {
@@ -145,15 +135,12 @@ namespace Rubez
             }
             catch (Exception ex)
             {
-                result = false;
                 Console.WriteLine(ex.Message);
-
             }
 
         }
         public void Close()
         {
-            bool result = true; // не используемая переменная
             try
             {
                 if (npgSqlConnection.State == System.Data.ConnectionState.Open)
@@ -164,7 +151,6 @@ namespace Rubez
             }
             catch (Exception ex)
             {
-                result = false;
                 Console.WriteLine(ex.Message);
             }
 
@@ -174,65 +160,52 @@ namespace Rubez
         {
             string comT = "SELECT datname FROM pg_database;";
             NpgsqlCommand com = new NpgsqlCommand(comT, npgSqlConnection);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(com);
             DataTable dt = new DataTable();
-            da.Fill(dt);// при попытке 1го подключения падает на этом месте
-            return dt;
-        }
-        public DataTable ShowTbName()
-        {
-            // дублирование кода с npgSqlConnection - ты уже создаешь соединение при открытии бд
             try
             {
-                string connectionString = "Server=" + ip + ";Port=" + port + ";Username=" + username + ";Password=" + password + ";Database=" + db;
-                Console.WriteLine(connectionString);
-                npgSqlConnection = new NpgsqlConnection(connectionString);
-                //npgSqlConnection.Open();
+                NpgsqlDataAdapter da = new NpgsqlDataAdapter(com);
+                da.Fill(dt);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+            return dt;
+        }
+        public DataTable ShowTbName()
+        {
+            Conn();
             string comT = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
             NpgsqlCommand com = new NpgsqlCommand(comT, npgSqlConnection);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(com);
             DataTable dt = new DataTable();
-            da.Fill(dt);
+            try
+            {
+                NpgsqlDataAdapter da = new NpgsqlDataAdapter(com);
+                da.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return dt;
         }
 
         public DataSet Chart(string value1)
         {
-            // дублирование кода с npgSqlConnection - ты уже создаешь соединение при открытии бд
-            string connectionString = "Server=" + Properties.Settings.Default.ipTbC + ";Port=" + Properties.Settings.Default.portTbC + ";Username=" + Properties.Settings.Default.loginTbC + ";Password=" + Properties.Settings.Default.passwordTbC + ";Database=" + Properties.Settings.Default.comboDataTbC;
-            Console.WriteLine(connectionString);
-            npgSqlConnection = new NpgsqlConnection(connectionString);
-            NpgsqlCommand com = new NpgsqlCommand(value1, npgSqlConnection);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(com);
             DataSet ds = new DataSet();
-            da.Fill(ds);
+            Conn();
+            NpgsqlCommand com = new NpgsqlCommand(value1, npgSqlConnection);
+            try
+            {
+                NpgsqlDataAdapter da = new NpgsqlDataAdapter(com);
+                da.Fill(ds);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return ds;
 
         }
-
-
-
-
-
-        public void DataToCsv(string value1, DataTable value2)
-        {
-            //string connectionString = "Server=" + Properties.Settings.Default.ipTbC + ";Port=" + Properties.Settings.Default.portTbC + ";Username=" + Properties.Settings.Default.loginTbC + ";Password=" + Properties.Settings.Default.passwordTbC + ";Database=" + Properties.Settings.Default.comboDataTbC;
-            //npgSqlConnection = new NpgsqlConnection(connectionString);
-            string comT = (value1);
-
-            NpgsqlCommand com = new NpgsqlCommand(comT, npgSqlConnection);
-            NpgsqlDataAdapter da = new NpgsqlDataAdapter(com);
-            da.Fill(value2);
-
-
-        }
-
-
-
     }
 }
