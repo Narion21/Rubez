@@ -23,6 +23,13 @@ namespace Rubez
         System.Timers.Timer timerOfProcesses = new System.Timers.Timer();
         System.Timers.Timer timerOfProcesses2 = new System.Timers.Timer();
 
+        // с точки зрения архитектуры и воизбежания проблем лучше сделать словарь на стороне БД
+        // и оттуда отдавать его по мере необходимости на эту форму через геттер (см тему сеттеры и геттеры, ты это уже делал)
+        // данные всегда будут актуальные, будет точно все защищено от переписывания
+        // и не надо будет прокидывать между классами тяжелый массив данных
+        // + скорее всего ты топчишь сам себя пытаясь пробросить сотни данных в массиве, на  это надо время + озу лишнее
+        // + тк ид всегда число, не имеет смысла делать его сторокой, лучше тоже тогда сконвертировать
+        // его в число и словарь сделать <int, int>, он будет лучше для ОЗУ и быстрее работать
         Dictionary<string, int> dataForChart = new Dictionary<string, int>();
         int step = 10000;
         int startIdx = 0;
@@ -49,6 +56,8 @@ namespace Rubez
             //endIdx = dataBase.MaxId(dTStart.Text, dTFinish.Text);
             timerOfProcesses.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses);
             timerOfProcesses.Interval = 1000;
+            // не ленись - переименуй все переменыне нормально, чтобы понимать кто что делает
+            // как понять что делает timerOfProcesses2?
             timerOfProcesses2.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses2);
             timerOfProcesses2.Interval = 1000;
         }

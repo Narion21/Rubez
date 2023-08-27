@@ -132,11 +132,14 @@ namespace Rubez
                 NpgsqlDataReader reader = comDB.ExecuteReader();
                 while (reader.Read())
                 {
+                    // не имеет смысла инициализировать переменную и 2й строкой пихать в нее данные
+                    // это не красиво и путает + лишнии строки, лучше не привыкай так писать
+                    // string id = reader.GetValue(0).ToString(); - так лучше
                     string id;
                     int fotoreque;
-                    int test;
+                    int test; // не используемая переменная
                     id = reader.GetValue(0).ToString(); //Console.WriteLine(id + "   id");
-                    fotoreque = Convert.ToInt32(reader.GetValue(1)); //Console.WriteLine(fotoreque + "   fotoreque");
+                    fotoreque = Convert.ToInt32(reader.GetValue(1).ToString()); //Console.WriteLine(fotoreque + "   fotoreque");
                     
                     value1.Add(id, fotoreque);
                 }
