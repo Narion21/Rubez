@@ -15,6 +15,7 @@ namespace Rubez
 
         public NpgsqlConnection npgSqlConnection = null;
         public List<string> listinfo = new List<string>();
+        Chart chart = new Chart();
 
         public string MinId(string value1, string value2)
         {
@@ -108,14 +109,47 @@ namespace Rubez
                     {
                         string data = reader.GetValue(i).ToString();
                         listA.Add(data);
+
                     }
                 }
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
             return listA;
+        }
+
+        public void DataFromBDForChart(int startPos, int endPos, Dictionary<string, int> value1)
+        {
+            string com = "SELECT id, fotoreque FROM public.devicestable WHERE id >= '" + startPos.ToString() + "' AND id <= '" + endPos.ToString() + "' ORDER BY id asc;";
+            Console.WriteLine(com);
+            NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
+
+            try
+            {
+                NpgsqlDataReader reader = comDB.ExecuteReader();
+                while (reader.Read())
+                {
+                    string id;
+                    int fotoreque;
+                    int test;
+                    id = reader.GetValue(0).ToString(); //Console.WriteLine(id + "   id");
+                    fotoreque = Convert.ToInt32(reader.GetValue(1)); //Console.WriteLine(fotoreque + "   fotoreque");
+                    
+                    value1.Add(id, fotoreque);
+                }
+                reader.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "Ошибка в DataFromBDForChart");
+            }
+
+
+
         }
 
         public void Conn()
@@ -210,11 +244,5 @@ namespace Rubez
     }
 }
 
-/* запрос для графика - лучше делать чере ридер, сохранять 2 пары значений ид-фотоответ
- * для этого использовать любой контейнер Dictionary<> (foreach - через него потом брать элементы)
- * ключ - ид, значение фотоответ, можно использовать ключ как int фотоответ как удобно
- * 
- * 
- * для редактирования формы использовать свойства Anchor или Dock
- */
+
 

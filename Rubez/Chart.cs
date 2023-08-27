@@ -10,7 +10,8 @@ namespace Rubez
 {
     internal class Chart
     {
-        DataBase dataBase = new DataBase();
+        //DataBase dataBase = new DataBase();
+        
 
         /*
         private void doChartButton_Click(object sender, EventArgs e)
@@ -41,12 +42,13 @@ namespace Rubez
 
         }
         */
-        
+
         public DataSet dataToChart(string value1, string value2)
         {
+            DataBase dataBase = new DataBase();
             Form1 form1 = new Form1();
             string com = "SELECT daytime, fotoreque, id FROM public.devicestable WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "' ORDER BY id asc;";
-            //DataSet ds = dataBase.Chart(com);
+            DataSet ds = dataBase.Chart(com);
             return (dataBase.Chart(com));
 
         }

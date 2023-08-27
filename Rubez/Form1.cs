@@ -23,13 +23,13 @@ namespace Rubez
         System.Timers.Timer timerOfProcesses = new System.Timers.Timer();
         System.Timers.Timer timerOfProcesses2 = new System.Timers.Timer();
 
-
+        Dictionary<string, int> dataForChart = new Dictionary<string, int>();
         int step = 10000;
         int startIdx = 0;
         int endIdx = 0;
         int count = 0;
         int repeat = 0;
-        int remainderId = 0; 
+        int remainderId = 0;
         string savePath = "";
         public Form1()
         {
@@ -49,6 +49,8 @@ namespace Rubez
             //endIdx = dataBase.MaxId(dTStart.Text, dTFinish.Text);
             timerOfProcesses.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses);
             timerOfProcesses.Interval = 1000;
+            timerOfProcesses2.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses2);
+            timerOfProcesses2.Interval = 1000;
         }
 
         private int DataInterval()
@@ -146,7 +148,7 @@ namespace Rubez
                 }
             }
             catch // допиши
-            { 
+            {
             }
 
         }
@@ -173,7 +175,7 @@ namespace Rubez
 
         private void reportButton_Click(object sender, EventArgs e)
         {
-            
+
             try
             {
                 string month = dTStart.Text[5].ToString() + dTStart.Text[6].ToString();
@@ -202,7 +204,7 @@ namespace Rubez
                     {
                         savePath = "";
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -214,20 +216,30 @@ namespace Rubez
 
         private void TimeoutProcesses(object sender, ElapsedEventArgs e)
         {
-            
+
 
             if (count != repeat)
             {
+                Console.WriteLine("МЫ В ТАЙМЕР 1 ИФ");
+                Console.WriteLine(count + "   СДЕЛАНО");
+                Console.WriteLine(repeat + "   ОСТАЛОСЬ");
                 count++;
                 endIdx = startIdx + step;
+                Console.WriteLine(startIdx + " ====START====");
+                Console.WriteLine(endIdx + " ====END====");
                 GetDataByReader();
                 startIdx = endIdx;
             }
             else
             {
+                Console.WriteLine("МЫ В ТАЙМЕР ЭЛС");
+                Console.WriteLine(count + "   СДЕЛАНО");
+                Console.WriteLine(repeat + "   ОСТАЛОСЬ");
                 timerOfProcesses.Stop();
                 startIdx = endIdx;
                 endIdx = startIdx + remainderId;
+                Console.WriteLine(startIdx + " ====START====");
+                Console.WriteLine(endIdx + " ====END====");
                 GetDataByReader();
                 count = 0;
                 remainderId = 0;
@@ -272,9 +284,21 @@ namespace Rubez
             }
 
         }
-
+        private void TEST()
+        {
+            Console.WriteLine(count);
+            Console.WriteLine(repeat);
+            Console.WriteLine(remainderId);
+            dataBase.Conn();
+            dataBase.IdCount(dTStart.Text, dTFinish.Text);
+            dataBase.Close();
+        }
         private void button2_Click(object sender, EventArgs e)
         {
+
+            Console.WriteLine(count);
+            Console.WriteLine(repeat);
+            Console.WriteLine(remainderId);
             dataBase.Conn();
             dataBase.IdCount(dTStart.Text, dTFinish.Text);
             dataBase.Close();
@@ -460,13 +484,91 @@ namespace Rubez
 
         }
 
+
         private void button3_Click(object sender, EventArgs e)
         {
             dataBase.Conn();
-            List<string> tempList = dataBase.DataFromBD(startIdx, endIdx);
+            startIdx = int.Parse(dataBase.MinId(dTStart.Text, dTFinish.Text));
+            endIdx = int.Parse(dataBase.MaxId(dTStart.Text, dTFinish.Text));
+            //dataBase.DataFromBDForChart(startIdx, endIdx, dataForChart);
             dataBase.Close();
+
+            /*foreach (var i in dataForChart)
+            {
+                Console.WriteLine(i + " СЛОВАРЬ СЛОВАРЬ data");
+                count++;
+                Console.WriteLine(count + " ====СЧЕТЧИК====");
+            }*/
+            int numberId = endIdx - startIdx;
+            repeat = numberId / step;
+            remainderId = numberId - repeat * step;
+            timerOfProcesses2.Start();
+
+
+
+
+
         }
 
+
+        private void GetDataByReaderForChart()
+        {
+            int count = 0;
+            dataBase.Conn();
+            dataBase.DataFromBDForChart(startIdx, endIdx, dataForChart);
+            dataBase.Close();
+            foreach (var i in dataForChart)
+            {
+                //Console.WriteLine(i + " СЛОВАРЬ СЛОВАРЬ data");
+                //count++;
+                //Console.WriteLine(count + " ====СЧЕТЧИК====");
+            }
+        }
+
+        private void TimeoutProcesses2(object sender, ElapsedEventArgs e)
+        {
+
+
+            if (count < repeat)
+            {
+
+                Console.WriteLine("МЫ В ТАЙМЕР 2 ИФ");
+                Console.WriteLine(count + "   СДЕЛАНО");
+                Console.WriteLine(repeat + "   ОСТАЛОСЬ");
+                endIdx = startIdx + step;
+                Console.WriteLine(startIdx + " ====START====");
+                Console.WriteLine(endIdx + " ====END====");
+                
+                GetDataByReaderForChart();
+                Console.WriteLine(dataForChart.Count()+"===COUNT===");
+                startIdx = endIdx;
+                count++;
+            }
+            else
+            {
+                Console.WriteLine("МЫ В ТАЙМЕР 2 ЭЛС");
+                Console.WriteLine(count + "   СДЕЛАНО");
+                Console.WriteLine(repeat + "   ОСТАЛОСЬ");
+                timerOfProcesses2.Stop();
+                startIdx = endIdx;
+                endIdx = startIdx + remainderId;
+                Console.WriteLine(startIdx + " ====START====");
+                Console.WriteLine(endIdx + " ====END====");
+                
+                GetDataByReaderForChart();
+                Console.WriteLine(dataForChart.Count() +"===COUNT===");
+                count = 0;
+                remainderId = 0;
+                startIdx = 0;
+                endIdx = 0;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            
+            Console.WriteLine(dataForChart.Count());  
+        }
     }
 
 }
