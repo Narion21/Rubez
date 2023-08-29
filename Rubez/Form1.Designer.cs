@@ -46,7 +46,6 @@
             this.reportButton = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.errorDataLb = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -187,22 +186,11 @@
             this.errorDataLb.TabIndex = 56;
             this.errorDataLb.Text = "label";
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(714, 260);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 57;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(828, 524);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.errorDataLb);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.reportButton);
@@ -242,7 +230,6 @@
         private System.Windows.Forms.Button reportButton;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label errorDataLb;
-        private System.Windows.Forms.Button button1;
     }
 }
 

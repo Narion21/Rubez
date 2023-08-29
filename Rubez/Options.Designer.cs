@@ -43,6 +43,10 @@
             this.button1 = new System.Windows.Forms.Button();
             this.comboDataTb = new System.Windows.Forms.TextBox();
             this.comboTableTb = new System.Windows.Forms.TextBox();
+            this.columnNameCb = new System.Windows.Forms.ComboBox();
+            this.comboColumnTb = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.dataTypeCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ipTb
@@ -149,7 +153,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 273);
+            this.button1.Location = new System.Drawing.Point(12, 372);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(139, 48);
             this.button1.TabIndex = 15;
@@ -160,7 +164,7 @@
             // comboDataTb
             // 
             this.comboDataTb.Enabled = false;
-            this.comboDataTb.Location = new System.Drawing.Point(159, 162);
+            this.comboDataTb.Location = new System.Drawing.Point(159, 163);
             this.comboDataTb.Name = "comboDataTb";
             this.comboDataTb.Size = new System.Drawing.Size(100, 20);
             this.comboDataTb.TabIndex = 17;
@@ -168,16 +172,57 @@
             // comboTableTb
             // 
             this.comboTableTb.Enabled = false;
-            this.comboTableTb.Location = new System.Drawing.Point(159, 225);
+            this.comboTableTb.Location = new System.Drawing.Point(159, 233);
             this.comboTableTb.Name = "comboTableTb";
             this.comboTableTb.Size = new System.Drawing.Size(100, 20);
             this.comboTableTb.TabIndex = 18;
+            // 
+            // columnNameCb
+            // 
+            this.columnNameCb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.columnNameCb.FormattingEnabled = true;
+            this.columnNameCb.Location = new System.Drawing.Point(10, 305);
+            this.columnNameCb.Name = "columnNameCb";
+            this.columnNameCb.Size = new System.Drawing.Size(121, 21);
+            this.columnNameCb.TabIndex = 19;
+            // 
+            // comboColumnTb
+            // 
+            this.comboColumnTb.Enabled = false;
+            this.comboColumnTb.Location = new System.Drawing.Point(159, 306);
+            this.comboColumnTb.Name = "comboColumnTb";
+            this.comboColumnTb.Size = new System.Drawing.Size(100, 20);
+            this.comboColumnTb.TabIndex = 20;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(13, 260);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(99, 39);
+            this.button2.TabIndex = 21;
+            this.button2.Text = "Выбрать столбец";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // dataTypeCheckBox
+            // 
+            this.dataTypeCheckBox.AutoSize = true;
+            this.dataTypeCheckBox.Location = new System.Drawing.Point(202, 403);
+            this.dataTypeCheckBox.Name = "dataTypeCheckBox";
+            this.dataTypeCheckBox.Size = new System.Drawing.Size(70, 17);
+            this.dataTypeCheckBox.TabIndex = 24;
+            this.dataTypeCheckBox.Text = "дробные";
+            this.dataTypeCheckBox.UseVisualStyleBackColor = true;
             // 
             // Options
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(305, 359);
+            this.ClientSize = new System.Drawing.Size(335, 473);
+            this.Controls.Add(this.dataTypeCheckBox);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.comboColumnTb);
+            this.Controls.Add(this.columnNameCb);
             this.Controls.Add(this.comboTableTb);
             this.Controls.Add(this.comboDataTb);
             this.Controls.Add(this.button1);
@@ -195,7 +240,6 @@
             this.Controls.Add(this.ipTb);
             this.Name = "Options";
             this.Text = "Form2";
-            
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -218,5 +262,9 @@
         public System.Windows.Forms.TextBox passwordTb;
         public System.Windows.Forms.TextBox comboDataTb;
         public System.Windows.Forms.TextBox comboTableTb;
+        private System.Windows.Forms.ComboBox columnNameCb;
+        public System.Windows.Forms.TextBox comboColumnTb;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.CheckBox dataTypeCheckBox;
     }
 }

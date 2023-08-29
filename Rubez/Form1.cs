@@ -13,30 +13,30 @@ using System.IO;
 using System.Threading;
 using System.Timers;
 
+
+
 namespace Rubez
 {
     public partial class Form1 : Form
     {
-        Chart chart = new Chart();
-        CsvReport csvreport = new CsvReport();
+        CsvReport csvReport = new CsvReport();
         DataBase dataBase = new DataBase();
-        System.Timers.Timer timerOfProcesses = new System.Timers.Timer();
-        System.Timers.Timer timerOfProcesses2 = new System.Timers.Timer();
+        Chart chart = new Chart();
+        //System.Timers.Timer timerOfProcessesReport = new System.Timers.Timer();
+        System.Timers.Timer timerOfProcessesChart = new System.Timers.Timer();
 
-        // с точки зрения архитектуры и воизбежания проблем лучше сделать словарь на стороне БД
-        // и оттуда отдавать его по мере необходимости на эту форму через геттер (см тему сеттеры и геттеры, ты это уже делал)
-        // данные всегда будут актуальные, будет точно все защищено от переписывания
-        // и не надо будет прокидывать между классами тяжелый массив данных
-        // + скорее всего ты топчишь сам себя пытаясь пробросить сотни данных в массиве, на  это надо время + озу лишнее
-        // + тк ид всегда число, не имеет смысла делать его сторокой, лучше тоже тогда сконвертировать
-        // его в число и словарь сделать <int, int>, он будет лучше для ОЗУ и быстрее работать
-        Dictionary<string, int> dataForChart = new Dictionary<string, int>();
-        int step = 10000;
-        int startIdx = 0;
-        int endIdx = 0;
-        int count = 0;
-        int repeat = 0;
-        int remainderId = 0;
+
+        int step = 100000;
+        int startIdxReport = 0;
+        int startIdxChart = 0;
+        int endIdxReport = 0;
+        int endIdxChart = 0;
+        int countReport = 0;
+        int countChart = 0;
+        int repeatReport = 0;
+        int repeatChart = 0;
+        int remainderIdReport = 0;
+        int remainderIdChart = 0;
         string savePath = "";
         public Form1()
         {
@@ -52,14 +52,10 @@ namespace Rubez
             errorDataLb.Visible = false;
             errorFilterLb.Visible = false;
             timeErrorLb.Visible = false;
-            //startIdx = dataBase.MinId(dTStart.Text, dTFinish.Text);
-            //endIdx = dataBase.MaxId(dTStart.Text, dTFinish.Text);
-            timerOfProcesses.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses);
-            timerOfProcesses.Interval = 1000;
-            // не ленись - переименуй все переменыне нормально, чтобы понимать кто что делает
-            // как понять что делает timerOfProcesses2?
-            timerOfProcesses2.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses2);
-            timerOfProcesses2.Interval = 1000;
+            //timerOfProcessesReport.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses);
+            //timerOfProcessesReport.Interval = 1000;
+            timerOfProcessesChart.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses2);
+            timerOfProcessesChart.Interval = 1000;
         }
 
         private int DataInterval()
@@ -74,7 +70,7 @@ namespace Rubez
             form2.Show();
         }
 
-        /* private void chart1_MouseWheel(object sender, MouseEventArgs e)
+        /*private void chart1_MouseWheel(object sender, MouseEventArgs e)
          {
              var chart = (Chart)sender;
              var xAxis = chart.ChartAreas[0].AxisX;
@@ -111,31 +107,18 @@ namespace Rubez
 
         private void doChartButton_Click(object sender, EventArgs e)
         {
-
-            if ((dTStart.Value.Date) > (dTFinish.Value.Date))
-            {
-                timeErrorLb.Text = "Проверьте дату";
-                timeErrorLb.Visible = true;
-            }
-
-            else if ((dTStart.Value.Date) == (dTFinish.Value.Date) & (dTStart.Value.TimeOfDay >= dTFinish.Value.TimeOfDay))
-            {
-                timeErrorLb.Text = "Проверьте время";
-                timeErrorLb.Visible = true;
-            }
-
-            else
+            string month = dTStart.Text[5].ToString() + dTStart.Text[6].ToString();
+            if (DaysIntervalTest(int.Parse(month)) == true)
             {
                 dataBase.Conn();
-                chart1.DataSource = chart.dataToChart(dTStart.Text, dTFinish.Text);
+                startIdxChart = int.Parse(dataBase.MinId(dTStart.Text, dTFinish.Text));
+                endIdxChart = int.Parse(dataBase.MaxId(dTStart.Text, dTFinish.Text));
                 dataBase.Close();
-
-                chart1.Series[0].XValueMember = "id";
-                chart1.Series[0].YValueMembers = "fotoreque";
-                chart1.ChartAreas[0].AxisY.Minimum = 0;
-                chart1.ChartAreas[0].AxisY.Maximum = 100;
+                int numberId = endIdxChart - startIdxChart;
+                repeatChart = numberId / step;
+                remainderIdChart = numberId - repeatChart * step;
+                timerOfProcessesChart.Start();
                 timeErrorLb.Visible = false;
-
             }
         }
 
@@ -156,8 +139,9 @@ namespace Rubez
                     errorFilterLb.Text = "Нижний порог не может быть больше верхнего";
                 }
             }
-            catch // допиши
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
 
         }
@@ -184,7 +168,6 @@ namespace Rubez
 
         private void reportButton_Click(object sender, EventArgs e)
         {
-
             try
             {
                 string month = dTStart.Text[5].ToString() + dTStart.Text[6].ToString();
@@ -198,68 +181,59 @@ namespace Rubez
                     {
                         StreamWriter sw = new StreamWriter(sf.FileName);
                         sw.Close();
-                        savePath = sf.FileName;
-                        GetDataByReader();
+                        csvReport.savePath = sf.FileName;
                         dataBase.Conn();
-                        startIdx = int.Parse(dataBase.MinId(dTStart.Text, dTFinish.Text));
-                        endIdx = int.Parse(dataBase.MaxId(dTStart.Text, dTFinish.Text));
+                        csvReport.startIdxReport = int.Parse(dataBase.MinId(dTStart.Text, dTFinish.Text));
+                        csvReport.endIdxReport = int.Parse(dataBase.MaxId(dTStart.Text, dTFinish.Text));
                         dataBase.Close();
-                        int numberId = endIdx - startIdx;
-                        repeat = numberId / step;
-                        remainderId = numberId - repeat * step;
-                        timerOfProcesses.Start();
+                        int numberId = csvReport.endIdxReport - csvReport.startIdxReport;
+                        csvReport.repeatReport = numberId / csvReport.step;
+                        csvReport.remainderIdReport = numberId - csvReport.repeatReport * csvReport.step;
+                        //csvReport.GetDataByReader();
+                        Console.WriteLine(repeatReport + "repeatReport form");
+                        Console.WriteLine(remainderIdReport + "remainderIdReport form");
+
+                        csvReport.StartTimer();
                     }
                     else
                     {
                         savePath = "";
                     }
-
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-
         }
 
-        private void TimeoutProcesses(object sender, ElapsedEventArgs e)
+        /*private void TimeoutProcesses(object sender, ElapsedEventArgs e)
         {
-
-
-            if (count != repeat)
+            if (countReport != repeatReport)
             {
-                Console.WriteLine("МЫ В ТАЙМЕР 1 ИФ");
-                Console.WriteLine(count + "   СДЕЛАНО");
-                Console.WriteLine(repeat + "   ОСТАЛОСЬ");
-                count++;
-                endIdx = startIdx + step;
-                Console.WriteLine(startIdx + " ====START====");
-                Console.WriteLine(endIdx + " ====END====");
+                Console.WriteLine(countReport + "===ИЗ===" + repeatReport + " ОТЧЕТ ");
+                countReport++;
+                endIdxReport = startIdxReport + step;
                 GetDataByReader();
-                startIdx = endIdx;
+                startIdxReport = endIdxReport;
             }
             else
             {
-                Console.WriteLine("МЫ В ТАЙМЕР ЭЛС");
-                Console.WriteLine(count + "   СДЕЛАНО");
-                Console.WriteLine(repeat + "   ОСТАЛОСЬ");
-                timerOfProcesses.Stop();
-                startIdx = endIdx;
-                endIdx = startIdx + remainderId;
-                Console.WriteLine(startIdx + " ====START====");
-                Console.WriteLine(endIdx + " ====END====");
+                Console.WriteLine(countReport + "===ИЗ===" + repeatReport + " ОТЧЕТ ");
+                timerOfProcessesReport.Stop();
+                startIdxReport = endIdxReport;
+                endIdxReport = startIdxReport + remainderIdReport;
                 GetDataByReader();
-                count = 0;
-                remainderId = 0;
-                startIdx = 0;
-                endIdx = 0;
+                countReport = 0;
+                remainderIdReport = 0;
+                startIdxReport = 0;
+                endIdxReport = 0;
             }
         }
         private void GetDataByReader()
         {
             dataBase.Conn();
-            List<string> tempList = dataBase.DataFromBD(startIdx, endIdx);
+            List<string> tempList = dataBase.DataFromBD(startIdxReport, endIdxReport);
             dataBase.Close();
 
             if (tempList.Count > 0)
@@ -274,7 +248,6 @@ namespace Rubez
             {
                 int a = 0;
                 var csv = new StringBuilder();
-
                 foreach (string i in listInfo)
                 {
                     csv.Append(i + ";");
@@ -291,25 +264,15 @@ namespace Rubez
             {
                 Console.WriteLine(ex.Message);
             }
+        }  */
 
-        }
-        private void TEST()
-        {
-            Console.WriteLine(count);
-            Console.WriteLine(repeat);
-            Console.WriteLine(remainderId);
-            dataBase.Conn();
-            dataBase.IdCount(dTStart.Text, dTFinish.Text);
-            dataBase.Close();
-        }
         private void button2_Click(object sender, EventArgs e)
         {
-
-            Console.WriteLine(count);
-            Console.WriteLine(repeat);
-            Console.WriteLine(remainderId);
+            Console.WriteLine(countChart);
+            Console.WriteLine(repeatChart);
+            Console.WriteLine(remainderIdChart);
             dataBase.Conn();
-            dataBase.IdCount(dTStart.Text, dTFinish.Text);
+            dataBase.IdCount(dTStart.Text, dTFinish.Text, Properties.Settings.Default.comboTableTbC);
             dataBase.Close();
         }
         private bool DaysIntervalTest(int value)
@@ -496,88 +459,77 @@ namespace Rubez
 
         private void button3_Click(object sender, EventArgs e)
         {
-            dataBase.Conn();
-            startIdx = int.Parse(dataBase.MinId(dTStart.Text, dTFinish.Text));
-            endIdx = int.Parse(dataBase.MaxId(dTStart.Text, dTFinish.Text));
-            //dataBase.DataFromBDForChart(startIdx, endIdx, dataForChart);
-            dataBase.Close();
-
-            /*foreach (var i in dataForChart)
-            {
-                Console.WriteLine(i + " СЛОВАРЬ СЛОВАРЬ data");
-                count++;
-                Console.WriteLine(count + " ====СЧЕТЧИК====");
-            }*/
-            int numberId = endIdx - startIdx;
-            repeat = numberId / step;
-            remainderId = numberId - repeat * step;
-            timerOfProcesses2.Start();
-
-
-
-
 
         }
 
-
         private void GetDataByReaderForChart()
         {
-            int count = 0;
             dataBase.Conn();
-            dataBase.DataFromBDForChart(startIdx, endIdx, dataForChart);
+            dataBase.DataFromBDForChart(startIdxChart, endIdxChart, Properties.Settings.Default.comboColumnTbC, Properties.Settings.Default.comboTableTbC);
             dataBase.Close();
-            foreach (var i in dataForChart)
-            {
-                //Console.WriteLine(i + " СЛОВАРЬ СЛОВАРЬ data");
-                //count++;
-                //Console.WriteLine(count + " ====СЧЕТЧИК====");
-            }
         }
 
         private void TimeoutProcesses2(object sender, ElapsedEventArgs e)
         {
-
-
-            if (count < repeat)
+            GetDataByReaderForChart();
+            if (repeatChart == 0)
             {
-
-                Console.WriteLine("МЫ В ТАЙМЕР 2 ИФ");
-                Console.WriteLine(count + "   СДЕЛАНО");
-                Console.WriteLine(repeat + "   ОСТАЛОСЬ");
-                endIdx = startIdx + step;
-                Console.WriteLine(startIdx + " ====START====");
-                Console.WriteLine(endIdx + " ====END====");
-                
+                Console.WriteLine("МЫ В ИФ =0");
+                Console.WriteLine(countChart + "===ИЗ===" + repeatChart + " ОТЧЕТ ");
+                timerOfProcessesChart.Stop();
                 GetDataByReaderForChart();
-                Console.WriteLine(dataForChart.Count()+"===COUNT===");
-                startIdx = endIdx;
-                count++;
+                if (Properties.Settings.Default.dataTypeSwitchC == false)
+                {
+                    Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values);
+                    Invoke(action);
+                }
+                 else if (Properties.Settings.Default.dataTypeSwitchC == true)
+                {
+                    Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values);
+                    Invoke(action);
+                }
+                countChart = 0;
+                remainderIdChart = 0;
+                startIdxChart = 0;
+                endIdxChart = 0;
             }
+
+            else if ((countChart != repeatChart) & (repeatChart != 0))
+            {
+                Console.WriteLine(countChart + "===ИЗ===" + repeatChart + " ГРАФИК ");
+                endIdxChart = startIdxChart + step;
+                GetDataByReaderForChart();
+                startIdxChart = endIdxChart;
+                countChart++;
+            }
+
             else
             {
-                Console.WriteLine("МЫ В ТАЙМЕР 2 ЭЛС");
-                Console.WriteLine(count + "   СДЕЛАНО");
-                Console.WriteLine(repeat + "   ОСТАЛОСЬ");
-                timerOfProcesses2.Stop();
-                startIdx = endIdx;
-                endIdx = startIdx + remainderId;
-                Console.WriteLine(startIdx + " ====START====");
-                Console.WriteLine(endIdx + " ====END====");
-                
+                Console.WriteLine(countChart + "===ИЗ===" + repeatChart + " ГРАФИК ");
+                timerOfProcessesChart.Stop();
+                startIdxChart = endIdxChart;
+                endIdxChart = startIdxChart + remainderIdChart;
                 GetDataByReaderForChart();
-                Console.WriteLine(dataForChart.Count() +"===COUNT===");
-                count = 0;
-                remainderId = 0;
-                startIdx = 0;
-                endIdx = 0;
+                if (Properties.Settings.Default.dataTypeSwitchC == false)
+                {
+                    Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values);
+                    Invoke(action);
+                }
+                else if (Properties.Settings.Default.dataTypeSwitchC == true)
+                {
+                    Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values);
+                    Invoke(action);
+                }
+                    
+                dataBase.dataForChartInt.Clear();
+                countChart = 0;
+                remainderIdChart = 0;
+                startIdxChart = 0;
+                endIdxChart = 0;
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            
-            Console.WriteLine(dataForChart.Count());  
-        }
+
     }
 
 }

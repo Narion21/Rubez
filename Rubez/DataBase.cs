@@ -15,8 +15,15 @@ namespace Rubez
 
         public NpgsqlConnection npgSqlConnection = null;
         public List<string> listinfo = new List<string>();
-        Chart chart = new Chart();
 
+        public Dictionary<int, int> dataForChartInt { set; get; }
+        public Dictionary<int, float> dataForChartFloat { set; get; }
+
+        public DataBase()
+        {
+            dataForChartInt = new Dictionary<int, int>();
+            dataForChartFloat = new Dictionary<int, float>();
+        }
         public string MinId(string value1, string value2)
         {
             string id = "";
@@ -65,10 +72,10 @@ namespace Rubez
             return id;
         }
 
-        public int IdCount(string value1, string value2)
+        public int IdCount(string value1, string value2, string tableName)
         {
             int countId = 0;
-            string com = "SELECT MIN(id), MAX(id) FROM devicestable WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "'";
+            string com = "SELECT MIN(id), MAX(id) FROM " + tableName + " WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "'";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
             try
@@ -93,10 +100,10 @@ namespace Rubez
             return countId;
         }
 
-        public List<string> DataFromBD(int startPos, int endPos)
+        public List<string> DataFromBD(int startPos, int endPos, string tableName)
         {
             List<string> listA = new List<string>();
-            string com = "SELECT * FROM public.devicestable WHERE id >= '" + startPos.ToString() + "' AND id <= '" + endPos.ToString() + "' ORDER BY id asc;";
+            string com = "SELECT * FROM public." + tableName + " WHERE id >= '" + startPos.ToString() + "' AND id <= '" + endPos.ToString() + "' ORDER BY id asc;";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
             try
@@ -109,10 +116,8 @@ namespace Rubez
                     {
                         string data = reader.GetValue(i).ToString();
                         listA.Add(data);
-
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -121,38 +126,43 @@ namespace Rubez
             return listA;
         }
 
-        public void DataFromBDForChart(int startPos, int endPos, Dictionary<string, int> value1)
+        public void DataFromBDForChart(int startPos, int endPos, string columnName, string tableName)
         {
-            string com = "SELECT id, fotoreque FROM public.devicestable WHERE id >= '" + startPos.ToString() + "' AND id <= '" + endPos.ToString() + "' ORDER BY id asc;";
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+            string com = "SELECT id, " + columnName + " FROM public." + tableName + " WHERE id > '" + startPos.ToString() + "' AND id < '" + endPos.ToString() + "' ORDER BY id asc;";
             Console.WriteLine(com);
             NpgsqlCommand comDB = new NpgsqlCommand(com, npgSqlConnection);
-
             try
             {
                 NpgsqlDataReader reader = comDB.ExecuteReader();
                 while (reader.Read())
                 {
-                    // не имеет смысла инициализировать переменную и 2й строкой пихать в нее данные
-                    // это не красиво и путает + лишнии строки, лучше не привыкай так писать
-                    // string id = reader.GetValue(0).ToString(); - так лучше
-                    string id;
-                    int fotoreque;
-                    int test; // не используемая переменная
-                    id = reader.GetValue(0).ToString(); //Console.WriteLine(id + "   id");
-                    fotoreque = Convert.ToInt32(reader.GetValue(1).ToString()); //Console.WriteLine(fotoreque + "   fotoreque");
-                    
-                    value1.Add(id, fotoreque);
+                    if (Properties.Settings.Default.dataTypeSwitchC == false)
+                    {
+                        if (reader.GetValue(1) != null && reader.GetValue(1).ToString() != string.Empty)
+                        {
+                            int id = int.Parse(reader.GetValue(0).ToString());
+                            int fotoreque = int.Parse(reader.GetValue(1).ToString());
+                            dataForChartInt.Add(id, fotoreque);
+                        }
+                    }
+                    else if (Properties.Settings.Default.dataTypeSwitchC == true)
+                    {
+                        if (reader.GetValue(1) != null && reader.GetValue(1).ToString() != string.Empty)
+                        {
+                            int id1 = int.Parse(reader.GetValue(0).ToString());
+                            float fotoreque1 = float.Parse(reader.GetValue(1).ToString());
+                            Console.WriteLine(id1.ToString());
+                            Console.WriteLine(fotoreque1.ToString());
+                            dataForChartFloat.Add(id1, fotoreque1);
+                        }
+                    }
                 }
-                reader.Close();
-
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message + "Ошибка в DataFromBDForChart");
+                Console.WriteLine(ex.Message + "ошибка в DataFromBDForChart");
             }
-
-
-
         }
 
         public void Conn()
@@ -190,7 +200,6 @@ namespace Rubez
             {
                 Console.WriteLine(ex.Message);
             }
-
         }
 
         public DataTable ShowDbName()
@@ -227,23 +236,25 @@ namespace Rubez
             return dt;
         }
 
-        public DataSet Chart(string value1)
+        public DataTable ShowColumnName(string tableName)
         {
-            DataSet ds = new DataSet();
             Conn();
-            NpgsqlCommand com = new NpgsqlCommand(value1, npgSqlConnection);
+            string comT = "SELECT column_name FROM information_schema.columns WHERE table_name = '" + tableName + "';";
+            NpgsqlCommand com = new NpgsqlCommand(comT, npgSqlConnection);
+            DataTable dt = new DataTable();
             try
             {
                 NpgsqlDataAdapter da = new NpgsqlDataAdapter(com);
-                da.Fill(ds);
+                da.Fill(dt);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            return ds;
-
+            return dt;
         }
+
+
     }
 }
 
