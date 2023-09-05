@@ -119,22 +119,34 @@ namespace Rubez
         {
             try
             {
-                if (Double.Parse(maxTb.Text) > Double.Parse(minTb.Text))
+                if ((minTb.Text == "") || (maxTb.Text == ""))
                 {
-                    chart1.ChartAreas[0].AxisY.Minimum = Double.Parse(minTb.Text);
-                    chart1.ChartAreas[0].AxisY.Maximum = Double.Parse(maxTb.Text);
-                    errorFilterLb.Visible = false;
-                }
-                else if ((minTb.Text == "") & (maxTb.Text == ""))
-                {
-                    errorDataLb.Visible = true;
-                    errorDataLb.Text = "Введите минимальное и максимальное значение";
+                    errorFilterLb.Visible = true;
+                    errorFilterLb.Text = "Введите минимальное и максимальное значение";
                 }
                 else
                 {
-                    errorFilterLb.Visible = true;
-                    errorFilterLb.Text = "Нижний порог не может быть больше верхнего";
+                    if ((maxTb.Text.Length > 6) || (minTb.Text.Length > 6))
+                    {
+                        errorFilterLb.Visible = true;
+                        errorFilterLb.Text = "Масимальное значение не может быть больше 999.999";
+                    }
+
+                    else if (Double.Parse(maxTb.Text) > Double.Parse(minTb.Text))
+                    {
+                        chart1.ChartAreas[0].AxisY.Minimum = Double.Parse(minTb.Text);
+                        chart1.ChartAreas[0].AxisY.Maximum = Double.Parse(maxTb.Text);
+                        errorFilterLb.Visible = false;
+                    }
+
+                    else
+                    {
+                        errorFilterLb.Visible = true;
+                        errorFilterLb.Text = "Нижний порог не может быть больше верхнего";
+                    }
                 }
+
+                
             }
             catch (Exception ex)
             {
@@ -333,7 +345,7 @@ namespace Rubez
 
         private void makeLineButton_Click(object sender, EventArgs e)
         {
-            if ((lineNumberMin.Text == "") & (lineNumberMax.Text == ""))
+            if ((lineNumberMin.Text == "") || (lineNumberMax.Text == ""))
             {
                 errorDataLb.Visible = true;
                 errorDataLb.Text = "Введите минимальное и максимальное значение";
@@ -342,8 +354,22 @@ namespace Rubez
             {
                 errorDataLb.Visible = false;
                 chart1.Annotations.Clear();
-                Make_Line(Double.Parse(lineNumberMin.Text));
-                Make_Line(Double.Parse(lineNumberMax.Text));
+                if ((lineNumberMin.Text.Length > 5) || (lineNumberMax.Text.Length > 5))
+                {
+                    errorDataLb.Visible = true;
+                    errorDataLb.Text = "Масимальное значение не может быть больше 99.999";
+                }
+                else if (int.Parse(lineNumberMin.Text)> int.Parse(lineNumberMax.Text))
+                {
+                    errorDataLb.Visible = true;
+                    errorDataLb.Text = "Первое значение не может быть больше второго";
+                }
+                else
+                {
+                    Make_Line(Double.Parse(lineNumberMin.Text));
+                    Make_Line(Double.Parse(lineNumberMax.Text));
+                }
+                
             }
 
         }

@@ -40,12 +40,12 @@
             this.dbCb = new System.Windows.Forms.ComboBox();
             this.tbCb = new System.Windows.Forms.ComboBox();
             this.showTableListButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
             this.comboDataTb = new System.Windows.Forms.TextBox();
             this.comboTableTb = new System.Windows.Forms.TextBox();
             this.columnNameCb = new System.Windows.Forms.ComboBox();
             this.comboColumnTb = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.showColumnListButton = new System.Windows.Forms.Button();
             this.dataTypeCheckBox = new System.Windows.Forms.CheckBox();
             this.passTb = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
@@ -159,15 +159,15 @@
             this.showTableListButton.UseVisualStyleBackColor = true;
             this.showTableListButton.Click += new System.EventHandler(this.showTableListButton_Click);
             // 
-            // button1
+            // saveButton
             // 
-            this.button1.Location = new System.Drawing.Point(10, 372);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(123, 55);
-            this.button1.TabIndex = 15;
-            this.button1.Text = "Сохранить настройки";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.saveButton_Click);
+            this.saveButton.Location = new System.Drawing.Point(10, 372);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(123, 55);
+            this.saveButton.TabIndex = 15;
+            this.saveButton.Text = "Сохранить настройки";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // comboDataTb
             // 
@@ -202,15 +202,15 @@
             this.comboColumnTb.Size = new System.Drawing.Size(100, 20);
             this.comboColumnTb.TabIndex = 20;
             // 
-            // button2
+            // showColumnListButton
             // 
-            this.button2.Location = new System.Drawing.Point(12, 274);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(99, 39);
-            this.button2.TabIndex = 21;
-            this.button2.Text = "Выбрать столбец";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.showColumnButton_Click);
+            this.showColumnListButton.Location = new System.Drawing.Point(12, 274);
+            this.showColumnListButton.Name = "showColumnListButton";
+            this.showColumnListButton.Size = new System.Drawing.Size(99, 39);
+            this.showColumnListButton.TabIndex = 21;
+            this.showColumnListButton.Text = "Выбрать столбец";
+            this.showColumnListButton.UseVisualStyleBackColor = true;
+            this.showColumnListButton.Click += new System.EventHandler(this.showColumnButton_Click);
             // 
             // dataTypeCheckBox
             // 
@@ -258,12 +258,12 @@
             this.Controls.Add(this.button3);
             this.Controls.Add(this.passTb);
             this.Controls.Add(this.dataTypeCheckBox);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.showColumnListButton);
             this.Controls.Add(this.comboColumnTb);
             this.Controls.Add(this.columnNameCb);
             this.Controls.Add(this.comboTableTb);
             this.Controls.Add(this.comboDataTb);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.saveButton);
             this.Controls.Add(this.showTableListButton);
             this.Controls.Add(this.tbCb);
             this.Controls.Add(this.dbCb);
@@ -277,8 +277,8 @@
             this.Controls.Add(this.portTb);
             this.Controls.Add(this.ipTb);
             this.Name = "Options";
-            this.Text = "Form2";
-            this.Load += new System.EventHandler(this.Form2_Load);
+            this.Text = "Настройки";
+            this.Load += new System.EventHandler(this.Options_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -291,7 +291,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button showTableListButton;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button saveButton;
         public System.Windows.Forms.ComboBox dbCb;
         public System.Windows.Forms.ComboBox tbCb;
         public System.Windows.Forms.TextBox ipTb;
@@ -302,7 +302,7 @@
         public System.Windows.Forms.TextBox comboTableTb;
         private System.Windows.Forms.ComboBox columnNameCb;
         public System.Windows.Forms.TextBox comboColumnTb;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button showColumnListButton;
         private System.Windows.Forms.CheckBox dataTypeCheckBox;
         private System.Windows.Forms.TextBox passTb;
         private System.Windows.Forms.Button button3;

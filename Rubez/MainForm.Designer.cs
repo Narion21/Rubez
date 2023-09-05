@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.optionButton = new System.Windows.Forms.Button();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.doChartButton = new System.Windows.Forms.Button();
@@ -67,22 +67,22 @@
             this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(12, 55);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            series2.YValuesPerPoint = 2;
-            this.chart1.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+            series1.IsVisibleInLegend = false;
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            series1.YValuesPerPoint = 2;
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(804, 463);
             this.chart1.TabIndex = 41;
             this.chart1.Text = "chart1";
-            this.chart1.UseWaitCursor = true;
             // 
             // doChartButton
             // 
@@ -123,7 +123,7 @@
             // errorFilterLb
             // 
             this.errorFilterLb.AutoSize = true;
-            this.errorFilterLb.Location = new System.Drawing.Point(563, 51);
+            this.errorFilterLb.Location = new System.Drawing.Point(528, 51);
             this.errorFilterLb.Name = "errorFilterLb";
             this.errorFilterLb.Size = new System.Drawing.Size(29, 13);
             this.errorFilterLb.TabIndex = 47;
@@ -167,7 +167,7 @@
             // errorDataLb
             // 
             this.errorDataLb.AutoSize = true;
-            this.errorDataLb.Location = new System.Drawing.Point(563, 64);
+            this.errorDataLb.Location = new System.Drawing.Point(528, 64);
             this.errorDataLb.Name = "errorDataLb";
             this.errorDataLb.Size = new System.Drawing.Size(29, 13);
             this.errorDataLb.TabIndex = 56;
@@ -209,6 +209,9 @@
             // 
             // axisXLb
             // 
+            this.axisXLb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.axisXLb.AutoSize = true;
             this.axisXLb.Location = new System.Drawing.Point(95, 496);
             this.axisXLb.Name = "axisXLb";
@@ -216,7 +219,7 @@
             this.axisXLb.TabIndex = 61;
             this.axisXLb.Text = "Id";
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -238,7 +241,7 @@
             this.Controls.Add(this.doChartButton);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.optionButton);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = " ";
             this.Load += new System.EventHandler(this.MainForm_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();

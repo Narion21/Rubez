@@ -35,7 +35,7 @@ namespace Rubez
             dataForChartInt = new Dictionary<int, int>();
             dataForChartFloat = new Dictionary<int, float>();
         }
-        public string MinId(string value1, string value2, string tableName)
+        public void MinId(string value1, string value2, string tableName)
         {
             string id = "";
             string com = "SELECT MIN(id) FROM " + tableName + " WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "'";
@@ -57,10 +57,10 @@ namespace Rubez
             {
                 Console.WriteLine(ex.Message);
             }
-            return id;
+           
         }
 
-        public string MaxId(string value1, string value2, string tableName)
+        public void MaxId(string value1, string value2, string tableName)
         {
             string id = "";
             string com = "SELECT MAX(id) FROM " + tableName + " WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "'";
@@ -83,7 +83,7 @@ namespace Rubez
             {
                 Console.WriteLine(ex.Message);
             }
-            return id;
+           
         }
 
         public String DataFromBDColumnName(string tableName)

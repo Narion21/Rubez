@@ -22,7 +22,7 @@ namespace Rubez
             InitializeComponent();
         }
 
-        private void Form2_Load(object sender, EventArgs e)
+        private void Options_Load(object sender, EventArgs e)
         {
             passErrLb.Visible = true;
             passErrLb.Text = "Введите пароль";
@@ -42,9 +42,9 @@ namespace Rubez
             dbCb.Enabled = false;
             showTableListButton.Enabled = false;
             tbCb.Enabled = false;
-            button2.Enabled = false;
+            showColumnListButton.Enabled = false;
             columnNameCb.Enabled = false;
-            button1.Enabled = false;
+            saveButton.Enabled = false;
             dataTypeCheckBox.Enabled = false;
 
         }
@@ -63,6 +63,8 @@ namespace Rubez
                 dbCb.DisplayMember = "DATNAME";
                 dbCb.ValueMember = "DATNAME";
                 dataBase.Close();
+                showTableListButton.Enabled = true;
+                tbCb.Enabled = true;
             }
         }
 
@@ -73,6 +75,8 @@ namespace Rubez
                 comboDataTb.Text = dbCb.SelectedValue.ToString();
                 Properties.Settings.Default.comboDataTbC = dbCb.Text;
                 Properties.Settings.Default.Save();
+                showColumnListButton.Enabled = true;
+                columnNameCb.Enabled = true;
             }
 
             tbCb.DataSource = dataBase.ShowTbName();
@@ -138,11 +142,7 @@ namespace Rubez
                     passwordTb.Enabled = true;
                     connToDbButton.Enabled = true;
                     dbCb.Enabled = true;
-                    showTableListButton.Enabled = true;
-                    tbCb.Enabled = true;
-                    button2.Enabled = true;
-                    columnNameCb.Enabled = true;
-                    button1.Enabled = true;
+                    saveButton.Enabled = true;
                     dataTypeCheckBox.Enabled = true;
                     passErrLb.Visible = false;
                 }
@@ -177,8 +177,6 @@ namespace Rubez
 
         private void loginTb_KeyPress(object sender, KeyPressEventArgs e)
         {
-            char number = e.KeyChar;
-
             if (e.KeyChar == 59)
             {
                 e.Handled = true;
@@ -187,14 +185,12 @@ namespace Rubez
 
         private void passwordTb_KeyPress(object sender, KeyPressEventArgs e)
         {
-            char number = e.KeyChar;
-
             if (e.KeyChar == 59)
             {
                 e.Handled = true;
             }
         }
 
-        
+
     }
 }
