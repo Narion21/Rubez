@@ -89,7 +89,7 @@
             // 
             this.connToDbButton.Location = new System.Drawing.Point(12, 135);
             this.connToDbButton.Name = "connToDbButton";
-            this.connToDbButton.Size = new System.Drawing.Size(100, 36);
+            this.connToDbButton.Size = new System.Drawing.Size(121, 36);
             this.connToDbButton.TabIndex = 4;
             this.connToDbButton.Text = "Подключиться к базе данных";
             this.connToDbButton.UseVisualStyleBackColor = true;
@@ -100,9 +100,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(115, 19);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 13);
+            this.label1.Size = new System.Drawing.Size(49, 13);
             this.label1.TabIndex = 5;
-            this.label1.Text = "Айпи";
+            this.label1.Text = "Ip адрес";
             // 
             // label2
             // 
@@ -153,7 +153,7 @@
             // 
             this.showTableListButton.Location = new System.Drawing.Point(12, 204);
             this.showTableListButton.Name = "showTableListButton";
-            this.showTableListButton.Size = new System.Drawing.Size(100, 37);
+            this.showTableListButton.Size = new System.Drawing.Size(121, 37);
             this.showTableListButton.TabIndex = 11;
             this.showTableListButton.Text = "Показать список таблиц";
             this.showTableListButton.UseVisualStyleBackColor = true;
@@ -206,7 +206,7 @@
             // 
             this.showColumnListButton.Location = new System.Drawing.Point(12, 274);
             this.showColumnListButton.Name = "showColumnListButton";
-            this.showColumnListButton.Size = new System.Drawing.Size(99, 39);
+            this.showColumnListButton.Size = new System.Drawing.Size(121, 39);
             this.showColumnListButton.TabIndex = 21;
             this.showColumnListButton.Text = "Выбрать столбец";
             this.showColumnListButton.UseVisualStyleBackColor = true;
@@ -215,16 +215,16 @@
             // dataTypeCheckBox
             // 
             this.dataTypeCheckBox.AutoSize = true;
-            this.dataTypeCheckBox.Location = new System.Drawing.Point(159, 389);
+            this.dataTypeCheckBox.Location = new System.Drawing.Point(139, 392);
             this.dataTypeCheckBox.Name = "dataTypeCheckBox";
-            this.dataTypeCheckBox.Size = new System.Drawing.Size(70, 17);
+            this.dataTypeCheckBox.Size = new System.Drawing.Size(199, 17);
             this.dataTypeCheckBox.TabIndex = 24;
-            this.dataTypeCheckBox.Text = "дробные";
+            this.dataTypeCheckBox.Text = "Использовать дробные значения ";
             this.dataTypeCheckBox.UseVisualStyleBackColor = true;
             // 
             // passTb
             // 
-            this.passTb.Location = new System.Drawing.Point(223, 12);
+            this.passTb.Location = new System.Drawing.Point(223, 32);
             this.passTb.Name = "passTb";
             this.passTb.PasswordChar = '*';
             this.passTb.Size = new System.Drawing.Size(100, 20);
@@ -232,9 +232,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(234, 41);
+            this.button3.Location = new System.Drawing.Point(223, 58);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 34);
+            this.button3.Size = new System.Drawing.Size(100, 34);
             this.button3.TabIndex = 26;
             this.button3.Text = "Войти";
             this.button3.UseVisualStyleBackColor = true;
@@ -243,7 +243,7 @@
             // passErrLb
             // 
             this.passErrLb.AutoSize = true;
-            this.passErrLb.Location = new System.Drawing.Point(224, 93);
+            this.passErrLb.Location = new System.Drawing.Point(224, 12);
             this.passErrLb.Name = "passErrLb";
             this.passErrLb.Size = new System.Drawing.Size(35, 13);
             this.passErrLb.TabIndex = 27;

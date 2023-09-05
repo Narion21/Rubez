@@ -30,6 +30,14 @@ namespace Rubez
         }
         private void MainForm_Load_1(object sender, EventArgs e)
         {
+            chart1.ChartAreas[0].AxisY.Minimum = 0;
+            chart1.ChartAreas[0].AxisY.Maximum = 110;
+            Make_Line(Double.Parse("32"));
+            Make_Line(Double.Parse("86"));
+            minTb.Text = "0";
+            maxTb.Text = "110";
+            lineNumberMin.Text = "32";
+            lineNumberMax.Text = "86";
             axisYLb.Text = Properties.Settings.Default.comboColumnTbC;
             Console.WriteLine("FORM LOADDDDD");
             dTStart.CustomFormat = "yyyy-MM-dd HH:mm:ss";
@@ -56,8 +64,9 @@ namespace Rubez
 
         private void ReceiveFinishReadDataForChart()
         {
+            BlockPanel(true);
             Console.WriteLine("We finish ALL READ");
-            if(Properties.Settings.Default.dataTypeSwitchC == false)
+            if (Properties.Settings.Default.dataTypeSwitchC == false)
             {
                 this.Invoke((MethodInvoker)delegate () { chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values); });
             }
@@ -65,8 +74,8 @@ namespace Rubez
             {
                 this.Invoke((MethodInvoker)delegate () { chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values); });
             }
-            
-            
+
+
         }
         private int DataInterval()
         {
@@ -82,15 +91,12 @@ namespace Rubez
 
         private void doChartButton_Click(object sender, EventArgs e)
         {
+            BlockPanel(false);
             axisYLb.Text = Properties.Settings.Default.comboColumnTbC;
             dataBase.startId = 0;
             dataBase.endId = 0;
             chart1.Annotations.Clear();
             chart1.Series[0].Points.Clear();
-            chart1.ChartAreas[0].AxisY.Minimum = 0;
-            chart1.ChartAreas[0].AxisY.Maximum = 110;
-            Make_Line(Double.Parse("32"));
-            Make_Line(Double.Parse("86"));
 
             string month = dTStart.Text[5].ToString() + dTStart.Text[6].ToString();
             if (DaysIntervalTest(int.Parse(month)) == true)
@@ -108,10 +114,10 @@ namespace Rubez
                 }
                 else
                 {
+                    BlockPanel(true);
                     timeErrorLb.Visible = true;
                     timeErrorLb.Text = "Нет данных в это время";
                 }
-
             }
         }
 
@@ -146,7 +152,7 @@ namespace Rubez
                     }
                 }
 
-                
+
             }
             catch (Exception ex)
             {
@@ -245,6 +251,7 @@ namespace Rubez
 
         private void reportButton_Click(object sender, EventArgs e)
         {
+            BlockPanel(false);
             try
             {
                 string month = dTStart.Text[5].ToString() + dTStart.Text[6].ToString();
@@ -272,6 +279,7 @@ namespace Rubez
                         }
                         else
                         {
+                            BlockPanel(true);
                             timeErrorLb.Visible = true;
                             timeErrorLb.Text = "Нет данных в это время";
                         }
@@ -279,12 +287,14 @@ namespace Rubez
                     }
                     else
                     {
+                        BlockPanel(true);
                         savePath = "";
                     }
                 }
             }
             catch (Exception ex)
             {
+                BlockPanel(true);
                 Console.WriteLine(ex.Message);
             }
         }
@@ -296,6 +306,7 @@ namespace Rubez
 
         private void ReceiveFinishReadDataForReport()
         {
+            BlockPanel(true);
             timerOfProcessesReport.Stop();
             Console.WriteLine("We finish ALL READ");
         }
@@ -359,7 +370,7 @@ namespace Rubez
                     errorDataLb.Visible = true;
                     errorDataLb.Text = "Масимальное значение не может быть больше 99.999";
                 }
-                else if (int.Parse(lineNumberMin.Text)> int.Parse(lineNumberMax.Text))
+                else if (int.Parse(lineNumberMin.Text) > int.Parse(lineNumberMax.Text))
                 {
                     errorDataLb.Visible = true;
                     errorDataLb.Text = "Первое значение не может быть больше второго";
@@ -369,7 +380,7 @@ namespace Rubez
                     Make_Line(Double.Parse(lineNumberMin.Text));
                     Make_Line(Double.Parse(lineNumberMax.Text));
                 }
-                
+
             }
 
         }
@@ -400,6 +411,9 @@ namespace Rubez
             File.AppendAllText(savePath, columnNames);
         }
 
-
+        public void BlockPanel(bool isEnable)
+        {
+            this.Invoke((MethodInvoker)delegate () { mainPanel.Enabled = isEnable; });
+        }
     }
 }

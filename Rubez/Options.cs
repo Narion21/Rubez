@@ -51,21 +51,30 @@ namespace Rubez
 
         private void connButton_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.ipTbC = ipTb.Text;
-            Properties.Settings.Default.portTbC = portTb.Text;
-            Properties.Settings.Default.loginTbC = loginTb.Text;
-            Properties.Settings.Default.passwordTbC = passwordTb.Text;
-            Properties.Settings.Default.Save();
-            dataBase.Conn();
-            if (dataBase.npgSqlConnection.State == System.Data.ConnectionState.Open)
+            if (ipTb.Text != string.Empty & portTb.Text != string.Empty &
+            loginTb.Text != string.Empty & passwordTb.Text != string.Empty)
             {
-                dbCb.DataSource = dataBase.ShowDbName();
-                dbCb.DisplayMember = "DATNAME";
-                dbCb.ValueMember = "DATNAME";
-                dataBase.Close();
-                showTableListButton.Enabled = true;
-                tbCb.Enabled = true;
+                Properties.Settings.Default.ipTbC = ipTb.Text;
+                Properties.Settings.Default.portTbC = portTb.Text;
+                Properties.Settings.Default.loginTbC = loginTb.Text;
+                Properties.Settings.Default.passwordTbC = passwordTb.Text;
+                Properties.Settings.Default.Save();
+                dataBase.Conn();
+                if (dataBase.npgSqlConnection.State == System.Data.ConnectionState.Open)
+                {
+
+                    dbCb.DataSource = dataBase.ShowDbName();
+                    dbCb.DisplayMember = "DATNAME";
+                    dbCb.ValueMember = "DATNAME";
+                    dataBase.Close();
+                    showTableListButton.Enabled = true;
+                    tbCb.Enabled = true;
+                }
             }
+            
+
+
+
         }
 
         private void showTableListButton_Click(object sender, EventArgs e)

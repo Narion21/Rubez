@@ -49,12 +49,14 @@
             this.lineNumberMax = new System.Windows.Forms.TextBox();
             this.axisYLb = new System.Windows.Forms.Label();
             this.axisXLb = new System.Windows.Forms.Label();
+            this.mainPanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            this.mainPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // optionButton
             // 
-            this.optionButton.Location = new System.Drawing.Point(33, 6);
+            this.optionButton.Location = new System.Drawing.Point(0, 7);
             this.optionButton.Name = "optionButton";
             this.optionButton.Size = new System.Drawing.Size(75, 43);
             this.optionButton.TabIndex = 33;
@@ -69,6 +71,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             chartArea1.Name = "ChartArea1";
             this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Enabled = false;
             legend1.Name = "Legend1";
             this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(12, 55);
@@ -80,13 +83,13 @@
             series1.Name = "Series1";
             series1.YValuesPerPoint = 2;
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(804, 463);
+            this.chart1.Size = new System.Drawing.Size(827, 463);
             this.chart1.TabIndex = 41;
             this.chart1.Text = "chart1";
             // 
             // doChartButton
             // 
-            this.doChartButton.Location = new System.Drawing.Point(126, 6);
+            this.doChartButton.Location = new System.Drawing.Point(93, 7);
             this.doChartButton.Name = "doChartButton";
             this.doChartButton.Size = new System.Drawing.Size(75, 43);
             this.doChartButton.TabIndex = 43;
@@ -96,7 +99,7 @@
             // 
             // minTb
             // 
-            this.minTb.Location = new System.Drawing.Point(552, 5);
+            this.minTb.Location = new System.Drawing.Point(519, 6);
             this.minTb.Name = "minTb";
             this.minTb.Size = new System.Drawing.Size(40, 20);
             this.minTb.TabIndex = 44;
@@ -104,7 +107,7 @@
             // 
             // maxTb
             // 
-            this.maxTb.Location = new System.Drawing.Point(595, 5);
+            this.maxTb.Location = new System.Drawing.Point(562, 6);
             this.maxTb.Name = "maxTb";
             this.maxTb.Size = new System.Drawing.Size(39, 20);
             this.maxTb.TabIndex = 45;
@@ -112,7 +115,7 @@
             // 
             // filterBt
             // 
-            this.filterBt.Location = new System.Drawing.Point(640, 2);
+            this.filterBt.Location = new System.Drawing.Point(607, 5);
             this.filterBt.Name = "filterBt";
             this.filterBt.Size = new System.Drawing.Size(75, 23);
             this.filterBt.TabIndex = 46;
@@ -132,7 +135,7 @@
             // dTStart
             // 
             this.dTStart.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dTStart.Location = new System.Drawing.Point(228, 6);
+            this.dTStart.Location = new System.Drawing.Point(195, 7);
             this.dTStart.Name = "dTStart";
             this.dTStart.Size = new System.Drawing.Size(131, 20);
             this.dTStart.TabIndex = 48;
@@ -140,7 +143,7 @@
             // dTFinish
             // 
             this.dTFinish.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dTFinish.Location = new System.Drawing.Point(377, 6);
+            this.dTFinish.Location = new System.Drawing.Point(344, 7);
             this.dTFinish.Name = "dTFinish";
             this.dTFinish.Size = new System.Drawing.Size(131, 20);
             this.dTFinish.TabIndex = 49;
@@ -148,7 +151,7 @@
             // timeErrorLb
             // 
             this.timeErrorLb.AutoSize = true;
-            this.timeErrorLb.Location = new System.Drawing.Point(252, 34);
+            this.timeErrorLb.Location = new System.Drawing.Point(219, 35);
             this.timeErrorLb.Name = "timeErrorLb";
             this.timeErrorLb.Size = new System.Drawing.Size(29, 13);
             this.timeErrorLb.TabIndex = 50;
@@ -156,7 +159,7 @@
             // 
             // reportButton
             // 
-            this.reportButton.Location = new System.Drawing.Point(739, 2);
+            this.reportButton.Location = new System.Drawing.Point(706, 5);
             this.reportButton.Name = "reportButton";
             this.reportButton.Size = new System.Drawing.Size(77, 47);
             this.reportButton.TabIndex = 54;
@@ -175,7 +178,7 @@
             // 
             // lineNumberMin
             // 
-            this.lineNumberMin.Location = new System.Drawing.Point(552, 28);
+            this.lineNumberMin.Location = new System.Drawing.Point(519, 29);
             this.lineNumberMin.Name = "lineNumberMin";
             this.lineNumberMin.Size = new System.Drawing.Size(41, 20);
             this.lineNumberMin.TabIndex = 57;
@@ -183,7 +186,7 @@
             // 
             // makeLineButton
             // 
-            this.makeLineButton.Location = new System.Drawing.Point(640, 26);
+            this.makeLineButton.Location = new System.Drawing.Point(607, 29);
             this.makeLineButton.Name = "makeLineButton";
             this.makeLineButton.Size = new System.Drawing.Size(75, 23);
             this.makeLineButton.TabIndex = 58;
@@ -193,7 +196,7 @@
             // 
             // lineNumberMax
             // 
-            this.lineNumberMax.Location = new System.Drawing.Point(595, 28);
+            this.lineNumberMax.Location = new System.Drawing.Point(562, 29);
             this.lineNumberMax.Name = "lineNumberMax";
             this.lineNumberMax.Size = new System.Drawing.Size(39, 20);
             this.lineNumberMax.TabIndex = 59;
@@ -219,32 +222,42 @@
             this.axisXLb.TabIndex = 61;
             this.axisXLb.Text = "Id";
             // 
+            // mainPanel
+            // 
+            this.mainPanel.Controls.Add(this.reportButton);
+            this.mainPanel.Controls.Add(this.optionButton);
+            this.mainPanel.Controls.Add(this.doChartButton);
+            this.mainPanel.Controls.Add(this.lineNumberMax);
+            this.mainPanel.Controls.Add(this.minTb);
+            this.mainPanel.Controls.Add(this.makeLineButton);
+            this.mainPanel.Controls.Add(this.maxTb);
+            this.mainPanel.Controls.Add(this.lineNumberMin);
+            this.mainPanel.Controls.Add(this.filterBt);
+            this.mainPanel.Controls.Add(this.dTStart);
+            this.mainPanel.Controls.Add(this.dTFinish);
+            this.mainPanel.Controls.Add(this.timeErrorLb);
+            this.mainPanel.Location = new System.Drawing.Point(11, -4);
+            this.mainPanel.Name = "mainPanel";
+            this.mainPanel.Size = new System.Drawing.Size(783, 54);
+            this.mainPanel.TabIndex = 62;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(842, 518);
+            this.ClientSize = new System.Drawing.Size(865, 518);
+            this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.axisXLb);
             this.Controls.Add(this.axisYLb);
-            this.Controls.Add(this.lineNumberMax);
-            this.Controls.Add(this.makeLineButton);
-            this.Controls.Add(this.lineNumberMin);
             this.Controls.Add(this.errorDataLb);
-            this.Controls.Add(this.reportButton);
-            this.Controls.Add(this.timeErrorLb);
-            this.Controls.Add(this.dTFinish);
-            this.Controls.Add(this.dTStart);
             this.Controls.Add(this.errorFilterLb);
-            this.Controls.Add(this.filterBt);
-            this.Controls.Add(this.maxTb);
-            this.Controls.Add(this.minTb);
-            this.Controls.Add(this.doChartButton);
             this.Controls.Add(this.chart1);
-            this.Controls.Add(this.optionButton);
             this.Name = "MainForm";
             this.Text = " ";
             this.Load += new System.EventHandler(this.MainForm_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
+            this.mainPanel.ResumeLayout(false);
+            this.mainPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -269,6 +282,7 @@
         private System.Windows.Forms.TextBox lineNumberMax;
         private System.Windows.Forms.Label axisYLb;
         private System.Windows.Forms.Label axisXLb;
+        private System.Windows.Forms.Panel mainPanel;
     }
 }
 
