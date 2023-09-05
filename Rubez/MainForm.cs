@@ -13,8 +13,6 @@ using System.IO;
 using System.Threading;
 using System.Timers;
 
-
-
 namespace Rubez
 {
     public partial class MainForm : Form
@@ -29,11 +27,8 @@ namespace Rubez
             InitializeComponent();
         }
         private void MainForm_Load_1(object sender, EventArgs e)
-        {
-            chart1.ChartAreas[0].AxisY.Minimum = 0;
-            chart1.ChartAreas[0].AxisY.Maximum = 110;
-            Make_Line(Double.Parse("32"));
-            Make_Line(Double.Parse("86"));
+        { 
+            this.Text = "Graphics for Data Base v.2.0.0";
             minTb.Text = "0";
             maxTb.Text = "110";
             lineNumberMin.Text = "32";
@@ -74,8 +69,6 @@ namespace Rubez
             {
                 this.Invoke((MethodInvoker)delegate () { chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values); });
             }
-
-
         }
         private int DataInterval()
         {
@@ -91,7 +84,7 @@ namespace Rubez
 
         private void doChartButton_Click(object sender, EventArgs e)
         {
-            BlockPanel(false);
+            BlockPanel(false);           
             axisYLb.Text = Properties.Settings.Default.comboColumnTbC;
             dataBase.startId = 0;
             dataBase.endId = 0;
@@ -107,7 +100,10 @@ namespace Rubez
                 dataBase.Close();
                 dataBase.dataForChartInt.Clear();
                 dataBase.dataForChartFloat.Clear();
-                if ((dataBase.startId > 0) & (dataBase.endId > 0))
+
+                bool isLineOk = CreateLineForChart();
+                bool isFilterOk = CreateFilter();
+                if (dataBase.startId > 0 & dataBase.endId > 0 & isLineOk & isFilterOk)
                 {
                     timerOfProcessesChart.Start();
                     timeErrorLb.Visible = false;
@@ -119,13 +115,23 @@ namespace Rubez
                     timeErrorLb.Text = "Нет данных в это время";
                 }
             }
+            else
+            {
+                BlockPanel(true);
+            }
         }
 
         private void filterBt_Click(object sender, EventArgs e)
         {
+            CreateFilter();
+        }
+
+        private bool CreateFilter()
+        {
+            bool isOk = false;
             try
             {
-                if ((minTb.Text == "") || (maxTb.Text == ""))
+                if ((minTb.Text == string.Empty) || (maxTb.Text == string.Empty))
                 {
                     errorFilterLb.Visible = true;
                     errorFilterLb.Text = "Введите минимальное и максимальное значение";
@@ -137,27 +143,25 @@ namespace Rubez
                         errorFilterLb.Visible = true;
                         errorFilterLb.Text = "Масимальное значение не может быть больше 999.999";
                     }
-
                     else if (Double.Parse(maxTb.Text) > Double.Parse(minTb.Text))
                     {
+                        isOk = true;
                         chart1.ChartAreas[0].AxisY.Minimum = Double.Parse(minTb.Text);
                         chart1.ChartAreas[0].AxisY.Maximum = Double.Parse(maxTb.Text);
                         errorFilterLb.Visible = false;
                     }
-
                     else
                     {
                         errorFilterLb.Visible = true;
                         errorFilterLb.Text = "Нижний порог не может быть больше верхнего";
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+            return isOk;
         }
 
         private void minTb_KeyPress(object sender, KeyPressEventArgs e)
@@ -232,7 +236,6 @@ namespace Rubez
                 Console.WriteLine(ex.Message);
             }
             return res;
-
         }
 
         private void GetDataByReaderForChart()
@@ -246,7 +249,6 @@ namespace Rubez
         {
             timerOfProcessesChart.Stop();
             GetDataByReaderForChart();
-
         }
 
         private void reportButton_Click(object sender, EventArgs e)
@@ -283,7 +285,6 @@ namespace Rubez
                             timeErrorLb.Visible = true;
                             timeErrorLb.Text = "Нет данных в это время";
                         }
-
                     }
                     else
                     {
@@ -315,7 +316,6 @@ namespace Rubez
         {
             timerOfProcessesReport.Stop();
             GetDataByReader();
-
         }
 
         public void GetDataByReader()
@@ -356,8 +356,14 @@ namespace Rubez
 
         private void makeLineButton_Click(object sender, EventArgs e)
         {
-            if ((lineNumberMin.Text == "") || (lineNumberMax.Text == ""))
-            {
+            CreateLineForChart();
+        }
+
+        private bool CreateLineForChart()
+        {
+            bool isOk = false;
+            if ((lineNumberMin.Text == string.Empty) || (lineNumberMax.Text == string.Empty))
+            {               
                 errorDataLb.Visible = true;
                 errorDataLb.Text = "Введите минимальное и максимальное значение";
             }
@@ -366,23 +372,23 @@ namespace Rubez
                 errorDataLb.Visible = false;
                 chart1.Annotations.Clear();
                 if ((lineNumberMin.Text.Length > 5) || (lineNumberMax.Text.Length > 5))
-                {
+                {                    
                     errorDataLb.Visible = true;
                     errorDataLb.Text = "Масимальное значение не может быть больше 99.999";
                 }
                 else if (int.Parse(lineNumberMin.Text) > int.Parse(lineNumberMax.Text))
-                {
+                {                   
                     errorDataLb.Visible = true;
                     errorDataLb.Text = "Первое значение не может быть больше второго";
                 }
                 else
                 {
+                    isOk = true;
                     Make_Line(Double.Parse(lineNumberMin.Text));
                     Make_Line(Double.Parse(lineNumberMax.Text));
                 }
-
             }
-
+            return isOk;
         }
         private void Make_Line(Double start)
         {
