@@ -106,5 +106,41 @@ namespace Rubez.Properties {
                 this["comboDataTb"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string comboColumnTbC {
+            get {
+                return ((string)(this["comboColumnTbC"]));
+            }
+            set {
+                this["comboColumnTbC"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool dataTypeSwitchC {
+            get {
+                return ((bool)(this["dataTypeSwitchC"]));
+            }
+            set {
+                this["dataTypeSwitchC"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PassC {
+            get {
+                return ((string)(this["PassC"]));
+            }
+            set {
+                this["PassC"] = value;
+            }
+        }
     }
 }
