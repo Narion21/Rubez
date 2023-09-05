@@ -54,8 +54,35 @@ namespace Rubez
             timeErrorLb.Visible = false;
             //timerOfProcessesReport.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses);
             //timerOfProcessesReport.Interval = 1000;
+            // переименуй пожалуйста все переменные по целовечески, что за таймер 2
+            // и убери не используемые перемнные
             timerOfProcessesChart.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses2);
-            timerOfProcessesChart.Interval = 1000;
+            timerOfProcessesChart.Interval = 100;
+
+            // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            /*
+             * Это вторая часть работы с делегатами (эвентами), тут мы определяем в какой метод
+             * перейдет действие, как только мы получим сигнал с другой стороны
+             * я сделала логику из 2х частей
+             * 1 - мы считали кусок из базы, и надо запустить чтение след куска, для этого
+             * таймер уменьшила до 100мс чтобы просто не затоптать себя же
+             * 2 часть - мы закончили читать все и в этом случае можем приступать к отрисовке чарта
+             */
+            dataBase.emitSendFinishReadPartOfDataForChart += this.ReceiveFinishReadPartOfDataForChart;
+            dataBase.emitSendFinishReadDataForChart += this.ReceiveFinishReadDataForChart;
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        }
+
+        private void ReceiveFinishReadPartOfDataForChart()
+        {           
+            Console.WriteLine(">>> We finish part");
+            timerOfProcessesChart.Start();
+        }
+
+        private void ReceiveFinishReadDataForChart()
+        {            
+            Console.WriteLine("We finish ALL READ");
+            this.Invoke((MethodInvoker)delegate () { chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values); });
         }
 
         private int DataInterval()
@@ -107,19 +134,32 @@ namespace Rubez
 
         private void doChartButton_Click(object sender, EventArgs e)
         {
+            // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // добавила очистку чарта - его не было из-за чегос памился мусор раз за разом !!!!
+            chart1.Series[0].Points.Clear();            
+
             string month = dTStart.Text[5].ToString() + dTStart.Text[6].ToString();
             if (DaysIntervalTest(int.Parse(month)) == true)
             {
                 dataBase.Conn();
-                startIdxChart = int.Parse(dataBase.MinId(dTStart.Text, dTFinish.Text));
-                endIdxChart = int.Parse(dataBase.MaxId(dTStart.Text, dTFinish.Text));
+                // вызываю просто методы на определение начала и конца ид для чтения
+                dataBase.MinId(dTStart.Text, dTFinish.Text);
+                dataBase.MaxId(dTStart.Text, dTFinish.Text);
+               //bilo - startIdxChart = int.Parse(dataBase.MinId(dTStart.Text, dTFinish.Text));
+               //bilo - endIdxChart = int.Parse(dataBase.MaxId(dTStart.Text, dTFinish.Text));
                 dataBase.Close();
-                int numberId = endIdxChart - startIdxChart;
-                repeatChart = numberId / step;
-                remainderIdChart = numberId - repeatChart * step;
+                //bilo - int numberId = endIdxChart - startIdxChart;
+                //bilo - repeatChart = numberId / step;
+                //bilo - remainderIdChart = numberId - repeatChart * step;
+                
+                // добавила очистку словарей, иначе спапился мусор !!!!!
+                dataBase.dataForChartInt.Clear();
+                dataBase.dataForChartFloat.Clear();
+
                 timerOfProcessesChart.Start();
                 timeErrorLb.Visible = false;
             }
+            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
 
 
@@ -469,9 +509,27 @@ namespace Rubez
             dataBase.Close();
         }
 
+        // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        /* 
+         * Старайся не плодить логику там где ее не должно быть
+         * Если хочешь выполнение логики в момент таймаута - выноси ее в отдельную функцию
+         * Это раз
+         * 
+         * Два - отрисовка чарта на каждый таймаут это не верное дейсвтие с точки зрения логики в данном случае
+         * Да, можно сделать в реалтайме отрисовку, но для этого надо использовать чистые потоки
+         * В текущем случае будет правильнее сделать логику - собираем все - потом рисуем все
+         * Из-за переноса начала и конца ид внутрь бд и изменение логики запроса в функции 
+         * многие переменные теперь потеряли актуальность + мы облегчили сами фукнции
+         * Убери лишнии параметры и переменные ))
+         */
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         private void TimeoutProcesses2(object sender, ElapsedEventArgs e)
         {
+            timerOfProcessesChart.Stop();
             GetDataByReaderForChart();
+
+/*
+ вот это весь твой код, который я просто законментила целиком и вынесла в 2 строчки выше в сигналы
             if (repeatChart == 0)
             {
                 Console.WriteLine("МЫ В ИФ =0");
@@ -480,13 +538,19 @@ namespace Rubez
                 GetDataByReaderForChart();
                 if (Properties.Settings.Default.dataTypeSwitchC == false)
                 {
-                    Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values);
-                    Invoke(action);
+                    // Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values);
+                    //  Invoke(action);
+
+                 //>   this.Invoke((MethodInvoker)delegate () {  });
+
+                    this.Invoke((MethodInvoker)delegate () { chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values); });
                 }
-                 else if (Properties.Settings.Default.dataTypeSwitchC == true)
+                else
                 {
-                    Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values);
-                    Invoke(action);
+                  //  Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values);
+                  //  Invoke(action);
+
+                    this.Invoke((MethodInvoker)delegate () { chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values); });
                 }
                 countChart = 0;
                 remainderIdChart = 0;
@@ -512,13 +576,17 @@ namespace Rubez
                 GetDataByReaderForChart();
                 if (Properties.Settings.Default.dataTypeSwitchC == false)
                 {
-                    Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values);
-                    Invoke(action);
+                  //  Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values);
+                 //   Invoke(action);
+
+                    this.Invoke((MethodInvoker)delegate () { chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values); });
                 }
                 else if (Properties.Settings.Default.dataTypeSwitchC == true)
                 {
-                    Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values);
-                    Invoke(action);
+                  //  Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values);
+                  //  Invoke(action);
+                    this.Invoke((MethodInvoker)delegate () { chart1.Series[0].Points.DataBindXY(dataBase.dataForChartFloat.Keys, dataBase.dataForChartFloat.Values); });
+
                 }
                     
                 dataBase.dataForChartInt.Clear();
@@ -527,6 +595,9 @@ namespace Rubez
                 startIdxChart = 0;
                 endIdxChart = 0;
             }
+        
+        */
+        
         }
 
 
