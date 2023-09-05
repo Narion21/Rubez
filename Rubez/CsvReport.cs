@@ -8,119 +8,70 @@ using System.Windows.Forms;
 using System.IO;
 using Npgsql;
 using System.Threading;
-using System.Timers;
 
 namespace Rubez
 {
     internal class CsvReport
     {
         DataBase dataBase = new DataBase();
+        NpgsqlConnection npgSqlConnection = null;
 
-        public int step = 10000;
-        public int startIdxReport = 0;
-        public int endIdxReport = 0;
-        int countReport = 0;
-        public int repeatReport = 0;
-        public int remainderIdReport = 0;
-        public string savePath = "";
-
-        System.Timers.Timer timerOfProcessesReport = new System.Timers.Timer();
-
-
-        public CsvReport()
+        public void Csv(string value1, string value2)
         {
-            timerOfProcessesReport.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses);
-            timerOfProcessesReport.Interval = 1000;
-        }
+
+            
+            string com = "SELECT * FROM public.devicestable WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "' ORDER BY id asc;";
 
 
-        public void TimeoutProcesses(object sender, ElapsedEventArgs e)
-        {
-            if (repeatReport == 0)
+            DataTable dt = new DataTable();
+            //dataBase.DataFromBD(com, dt);
+            var csv = new StringBuilder();
+            foreach (DataRow row in dt.Rows)
             {
-                Console.WriteLine("МЫ В ИФ =0");
-                Console.WriteLine(repeatReport + "repeatReport");
-                Console.WriteLine(remainderIdReport + "remainderIdReport");
-                Console.WriteLine(countReport + "===ИЗ===" + repeatReport + " ОТЧЕТ ");
-                Console.WriteLine("СТАРТ====" + startIdxReport.ToString(), "ЭНД====" + endIdxReport.ToString());
-                timerOfProcessesReport.Stop();
-                GetDataByReader();
-                countReport = 0;
-                remainderIdReport = 0;
-                startIdxReport = 0;
-                endIdxReport = 0;
-            }
-
-            else if ((countReport != repeatReport) & (repeatReport != 0))
-            {
-
-                Console.WriteLine("МЫ В ИФ");
-                Console.WriteLine(repeatReport + "repeatReport");
-                Console.WriteLine(remainderIdReport + "remainderIdReport");
-                Console.WriteLine(countReport + "===ИЗ===" + repeatReport + " ОТЧЕТ ");
-                Console.WriteLine("СТАРТ====" + startIdxReport.ToString(), "ЭНД====" + endIdxReport.ToString());
-                countReport++;
-                endIdxReport = startIdxReport + step;
-                GetDataByReader();
-                startIdxReport = endIdxReport;
-            }
-
-            else
-            {
-                Console.WriteLine("МЫ В ЭЛС");
-                Console.WriteLine(repeatReport + "repeatReport");
-                Console.WriteLine(remainderIdReport + "remainderIdReport");
-                Console.WriteLine(countReport + "===ИЗ===" + repeatReport + " ОТЧЕТ ");
-                Console.WriteLine("СТАРТ====" + startIdxReport.ToString(), "ЭНД====" + endIdxReport.ToString());
-                timerOfProcessesReport.Stop();
-                startIdxReport = endIdxReport;
-                endIdxReport = startIdxReport + remainderIdReport;
-                GetDataByReader();
-                countReport = 0;
-                remainderIdReport = 0;
-                startIdxReport = 0;
-                endIdxReport = 0;
-            }
-        }
-        public void GetDataByReader()
-        {
-            dataBase.Conn();
-            List<string> tempList = dataBase.DataFromBD(startIdxReport, endIdxReport, Properties.Settings.Default.comboTableTbC);
-            dataBase.Close();
-
-            if (tempList.Count > 0)
-            {
-                WriteDataToCSV(tempList);
-            }
-        }
-
-        public void WriteDataToCSV(List<string> listInfo)
-        {
-            try
-            {
-                int a = 0;
-                var csv = new StringBuilder();
-                foreach (string i in listInfo)
+                foreach (var item in row.ItemArray)
                 {
-                    csv.Append(i + ";");
-                    a++;
-                    if (a == 37)
-                    {
-                        csv.AppendLine();
-                        a = 0;
-                    }
+                    csv.Append(item.ToString() + ",");
                 }
-                File.AppendAllText(savePath, csv.ToString());
+                csv.AppendLine();
             }
-            catch (Exception ex)
+            SaveFileDialog sf = new SaveFileDialog();
+            string filter = "CSV file (*.csv)|*.csv| All Files (*.*)|*.*";
+            sf.Filter = filter;
+            StreamWriter writer = null;
+
+            if (sf.ShowDialog() == DialogResult.OK)
             {
-                Console.WriteLine(ex.Message);
+                filter = sf.FileName;
+                writer = new StreamWriter(filter);
+                writer.WriteLine(csv);
+                writer.Close();
             }
+
+
+
+
+
+
+
+            //return (dt);
         }
 
-        public void StartTimer()
+        public void TestCSV()
         {
-            timerOfProcessesReport.Start();
+            Form1 form1 = new Form1();
+            string connectionString = "Server=" + Properties.Settings.Default.ipTbC + ";Port=" + Properties.Settings.Default.portTbC + ";Username=" + Properties.Settings.Default.loginTbC + ";Password=" + Properties.Settings.Default.passwordTbC + ";Database=" + Properties.Settings.Default.comboDataTbC;
+            Console.WriteLine(connectionString);
+            npgSqlConnection = new NpgsqlConnection(connectionString);
+            NpgsqlCommand com2 = new NpgsqlCommand("SELECT * FROM public.devicestable WHERE daytime >= '" + form1.dTStart.Text + "' AND daytime <= '" + form1.dTFinish.Text + "' ORDER BY id asc;");
+            NpgsqlTransaction transaction = null;
+            npgSqlConnection.Open();
+            transaction = npgSqlConnection.BeginTransaction();
+            com2.Transaction = transaction;
+            com2.ExecuteReader();
+
+            transaction.Commit();
+            dataBase.Close();
         }
+
     }
 }

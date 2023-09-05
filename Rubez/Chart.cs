@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Threading;
-using System.Timers;
-using System.IO;
 
 namespace Rubez
 {
@@ -14,81 +12,44 @@ namespace Rubez
     {
         DataBase dataBase = new DataBase();
 
-        public int step = 10000;
-        public int startIdxChart = 0;
-        public int endIdxChart = 0;
-        int countChart = 0;
-        public int repeatChart = 0;
-        public int remainderIdChart = 0;
-
-        System.Timers.Timer timerOfProcessesChart = new System.Timers.Timer();
-
-        public Chart()
+        /*
+        private void doChartButton_Click(object sender, EventArgs e)
         {
-            timerOfProcessesChart.Elapsed += new System.Timers.ElapsedEventHandler(TimeoutProcesses2);
-            timerOfProcessesChart.Interval = 1000;
-        }
-
-        private void GetDataByReaderForChart()
-        {
-            dataBase.Conn();
-            //dataBase.DataFromBDForChart(startIdxChart, endIdxChart);
-            dataBase.Close();
-        }
-
-        public void TimeoutProcesses2(object sender, ElapsedEventArgs e)
-        {
-            GetDataByReaderForChart();
-            if (repeatChart == 0)
+            if ((dTStart.Value.Date) > (dTFinish.Value.Date))
             {
-                Console.WriteLine("МЫ В ИФ =0");
-                Console.WriteLine(repeatChart + "repeatReport");
-                Console.WriteLine(remainderIdChart + "remainderIdReport");
-                Console.WriteLine(countChart + "===ИЗ===" + repeatChart + " ОТЧЕТ ");
-                Console.WriteLine("СТАРТ====" + startIdxChart.ToString(), "ЭНД====" + endIdxChart.ToString());
-                timerOfProcessesChart.Stop();
-                GetDataByReaderForChart();
-                countChart = 0;
-                remainderIdChart = 0;
-                startIdxChart = 0;
-                endIdxChart = 0;
+                timeErrorLb.Text = "Проверьте дату";
+                timeErrorLb.Visible = true;
             }
 
-            else if ((countChart != repeatChart) & (repeatChart != 0))
+            else if ((dTStart.Value.Date) == (dTFinish.Value.Date) & (dTStart.Value.TimeOfDay >= dTFinish.Value.TimeOfDay))
             {
-                Console.WriteLine(countChart + "===ИЗ===" + repeatChart + " ГРАФИК ");
-                endIdxChart = startIdxChart + step;
-                GetDataByReaderForChart();
-                //Action action = () => chart1.Series[0].Points.DataBindXY(dataBase.dataForChart.Keys, dataBase.dataForChart.Values);
-                //Invoke(action);
-                //dataBase.dataForChart.Clear();
-                startIdxChart = endIdxChart;
-                countChart++;
+                timeErrorLb.Text = "Проверьте время";
+                timeErrorLb.Visible = true;
             }
 
             else
             {
-                Form1 form1 = new Form1();
-                Console.WriteLine(countChart + "===ИЗ===" + repeatChart + " ГРАФИК ");
-                timerOfProcessesChart.Stop();
-                startIdxChart = endIdxChart;
-                endIdxChart = startIdxChart + remainderIdChart;
-                GetDataByReaderForChart();
-                form1.chart1.Series[0].Points.DataBindXY(dataBase.dataForChartInt.Keys, dataBase.dataForChartInt.Values);
-                //Action action = () => form1.chart1.Series[0].Points.DataBindXY(dataBase.dataForChart.Keys, dataBase.dataForChart.Values);
-                //Invoke(action);
-                dataBase.dataForChartInt.Clear();
-                countChart = 0;
-                remainderIdChart = 0;
-                startIdxChart = 0;
-                endIdxChart = 0;
-            }
-        }
-        public void StartTimer()
-        {
-            timerOfProcessesChart.Start();
-        }
+                string com = "SELECT daytime, fotoreque, id FROM public.devicestable WHERE daytime >= '" + dTStart.Text + "' AND daytime <= '" + dTFinish.Text + "' ORDER BY id asc;";
+                DataSet ds = dataBase.Chart(com);
+                Console.WriteLine(com);
+                dataBase.Close();
 
+
+            }
+            
+            
+
+        }
+        */
         
+        public DataSet dataToChart(string value1, string value2)
+        {
+            Form1 form1 = new Form1();
+            string com = "SELECT daytime, fotoreque, id FROM public.devicestable WHERE daytime >= '" + value1 + "' AND daytime <= '" + value2 + "' ORDER BY id asc;";
+            //DataSet ds = dataBase.Chart(com);
+            return (dataBase.Chart(com));
+
+        }
+       
     }
 }
